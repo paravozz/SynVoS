@@ -1,6 +1,6 @@
 #!flask/bin/python3
 from app import app, ALLOWED_EXTENSIONS, UPLOAD_FOLDER
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect
 import os
 from werkzeug.utils import secure_filename
 from .controllers.WaveArray import WaveArray
@@ -30,6 +30,8 @@ def index():
             path = os.path.join(UPLOAD_FOLDER, filename)
             file.save(path)
             wav = WaveArray(path)
+            # wav.time_stretch(2)
+            # wav.save('/Volumes/multimedia/prvz/Desktop/UNIVERSITY/SynVoS/app/static/result.wav')
             flash(wav)
 
     return render_template("index.html")
