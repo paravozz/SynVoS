@@ -10,7 +10,7 @@ class WaveArray(object):
         self._file = file_path.split('/')[-1]
 
         self._win_size = win_size
-        self._hop_size = win_size // 8  # TODO: 4 or 8
+        self._hop_size = win_size // 8
 
         self._samplerate, wav_array = waveio.read(file_path)
         self._stereo = True if type(wav_array[0]) is np.ndarray else False
