@@ -14,16 +14,17 @@ class WaveArray(object):
 
         self._samplerate, wav_array = waveio.read(file_path)
         self._stereo = True if type(wav_array[0]) is np.ndarray else False
-        self._samples = self._get_samples(wav_array)
+        self._wav_array = wav_array
 
-        self._duration = len(self._samples) / self._samplerate
+        self._duration = len(self._wav_array) / self._samplerate
         self._bpm = self._get_bpm()
         self._bar_len = self._bpm / 60
         self._bar_count = int(np.floor(self._duration / self._bar_len))
 
         self._pitch = self._get_pitch()
 
-    def _get_samples(self, wav_array, chan='L+R'):
+    @staticmethod
+    def _get_samples(wav_array, chan='L+R'):
         def get_channel(channel):
             i = 0 if channel is 'L' else 1
             res = []
@@ -31,7 +32,7 @@ class WaveArray(object):
             for sample in wav_array:
                 res += [sample[i]]
 
-            res = np.asarray(res)
+            res = np.asarray(res, dtype=np.int16)
             return res
 
         def get_sum():
@@ -42,20 +43,34 @@ class WaveArray(object):
 
             return np.asarray(samples_sum)
 
-        if not self._stereo:
+        if chan == 'Mono':
             return wav_array
-
-        if chan == 'L':
+        elif chan == 'L':
             return get_channel('L')
         elif chan == 'R':
             return get_channel('R')
         elif chan == 'L+R':
             return get_sum()
 
+    @staticmethod
+    def _compose_channels(left, right):
+        samples = []
+        for i in range(0, len(left)):
+            samples += [[left[i], right[i]]]
+
+        samples = np.asarray(samples).astype(np.int16)
+        return samples
+
     def _get_bpm(self):
         o = tempo("specdiff", self._win_size, self._hop_size, self._samplerate)
         # List of beats, in samples
-        samples = self._samples.astype(np.float32)
+        if self._stereo:
+            samples = self._get_samples(self._wav_array,
+                                        'L+R').astype(np.float32)
+        else:
+            samples = self._get_samples(self._wav_array,
+                                        'Mono').astype(np.float32)
+
         beats = []
         steps = len(samples) - (len(samples) % self._hop_size)
 
@@ -96,7 +111,12 @@ class WaveArray(object):
         pitch_o.set_unit("Hz")
         pitch_o.set_tolerance(tolerance)
 
-        samples = self._samples.astype(np.float32)
+        if self._stereo:
+            samples = self._get_samples(self._wav_array,
+                                        'L+R').astype(np.float32)
+        else:
+            samples = self._get_samples(self._wav_array,
+                                        'Mono').astype(np.float32)
 
         pitches = []
         steps = len(samples) - (len(samples) % self._hop_size)
@@ -107,22 +127,19 @@ class WaveArray(object):
 
         return process_pitch(pitches)
 
-    def time_stretch(self, rate):
-        win_s = self._win_size
-        hop_s = self._hop_size
-
+    @staticmethod
+    def _stretch_sound(samples, win_s, hop_s, n):
         warmup = win_s // hop_s - 1
 
         p = pvoc(win_s, hop_s)
 
         # allocate memory to store norms and phases
-        n_blocks = len(self._samples) // hop_s + 1
+        n_blocks = len(samples) // hop_s + 1
         # adding an empty frame at end of spectrogram
         norms = np.zeros((n_blocks + 1, win_s // 2 + 1), dtype=float_type)
         phases = np.zeros((n_blocks + 1, win_s // 2 + 1), dtype=float_type)
 
         block_read = 0
-        samples = self._samples
         steps_max = len(samples) - (len(samples) % hop_s)
 
         for i in range(0, steps_max, hop_s):
@@ -143,7 +160,7 @@ class WaveArray(object):
         sink_out = np.ndarray([], dtype=float_type)
 
         # interpolated time steps (j = alpha * i)
-        steps = np.arange(0, n_blocks, rate, dtype=float_type)
+        steps = np.arange(0, n_blocks, n, dtype=float_type)
         # initial phase
         phas_acc = phases[0]
         # excepted phase advance in each bin
@@ -183,10 +200,65 @@ class WaveArray(object):
             samples_proc = p.rdo(new_grain)
             sink_out = np.append(sink_out, samples_proc)
 
-        self._samples = sink_out.astype(np.int16)
+        return sink_out
+
+    def time_stretch(self, rate):
+        if self._stereo:
+            l = self._get_samples(self._wav_array, 'L')
+            r = self._get_samples(self._wav_array, 'R')
+
+            l_proc = self._stretch_sound(l, self._win_size,
+                                         self._hop_size, rate)
+            r_proc = self._stretch_sound(r, self._win_size,
+                                         self._hop_size, rate)
+
+            self._wav_array = \
+                self._compose_channels(l_proc, r_proc).astype(np.int16)
+        else:
+            samples = self._get_samples(self._wav_array, 'Mono')
+            self._wav_array = \
+                self._stretch_sound(samples,
+                                    self._win_size,
+                                    self._hop_size,
+                                    rate).astype(np.int16)
+
+    def pitch_shift(self, semitones):
+        def pitch(snd_array, factor):
+            """ Multiplies the sound's speed by some `factor` """
+            indices = np.round(np.arange(0, len(snd_array), factor))
+            indices = indices[indices < len(snd_array)].astype(int)
+            return snd_array[indices.astype(int)]
+
+        def shift(snd_array, n, win, hop):
+            """ Changes the pitch of a sound by ``n`` semitones. """
+            fac = 2 ** (n / 12.0)
+            stretched = self._stretch_sound(snd_array, win, hop, fac)
+            return pitch(stretched[win:], fac)
+
+        if self._stereo:
+            l = self._get_samples(self._wav_array, 'L')
+            r = self._get_samples(self._wav_array, 'R')
+
+            l_proc = self._wav_array = shift(l,
+                                             semitones,
+                                             self._win_size,
+                                             self._hop_size).astype(np.int16)
+            r_proc = self._wav_array = shift(r,
+                                             semitones,
+                                             self._win_size,
+                                             self._hop_size).astype(np.int16)
+
+            self._wav_array = \
+                self._compose_channels(l_proc, r_proc).astype(np.int16)
+        else:
+            samples = self._get_samples(self._wav_array, 'Mono')
+            self._wav_array = shift(samples,
+                                    semitones,
+                                    self._win_size,
+                                    self._hop_size).astype(np.int16)
 
     def save(self, file_path):
-        waveio.write(file_path, self._samplerate, self._samples)
+        waveio.write(file_path, self._samplerate, self._wav_array)
 
     def __repr__(self):
         stereo = "Stereo" if self._stereo else "Mono"
