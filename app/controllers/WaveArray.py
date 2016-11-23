@@ -107,7 +107,7 @@ class WaveArray(object):
 
         return process_pitch(pitches)
 
-    def time_stretch(self, rate):  # TODO: make it work
+    def time_stretch(self, rate):
         win_s = self._win_size
         hop_s = self._hop_size
 
@@ -128,7 +128,7 @@ class WaveArray(object):
         for i in range(0, steps_max, hop_s):
             # pitchin = pitch_o(samples[i:i + self._hop_size])
             # read from source
-            samples_proc = np.asarray(samples[i:i + hop_s]).astype(np.float32)
+            samples_proc = np.asarray(samples[i:i + hop_s]).astype(float_type)
             # compute fftgrain
             spec = p(samples_proc)
             # store current grain
@@ -140,7 +140,7 @@ class WaveArray(object):
         # just to make sure
         # source_in.close()
 
-        sink_out = []
+        sink_out = np.ndarray([], dtype=float_type)
 
         # interpolated time steps (j = alpha * i)
         steps = np.arange(0, n_blocks, rate, dtype=float_type)
@@ -168,7 +168,7 @@ class WaveArray(object):
             samples_proc = p.rdo(new_grain)
             if t > warmup:  # skip the first few frames to warm up phase vocoder
                 # write to sink
-                sink_out.append(samples_proc[:hop_s])
+                sink_out = np.append(sink_out, samples_proc)
 
             # calculate phase advance
             dphas = t_phases[1] - t_phases[0] - phi_advance
@@ -181,20 +181,32 @@ class WaveArray(object):
             new_grain.norm[:] = 0
             new_grain.phas[:] = 0
             samples_proc = p.rdo(new_grain)
-            sink_out.append(samples_proc[:hop_s])
+            sink_out = np.append(sink_out, samples_proc)
 
-        self._samples = np.asarray(sink_out).astype(np.int16)
+        self._samples = sink_out.astype(np.int16)
 
     def save(self, file_path):
         waveio.write(file_path, self._samplerate, self._samples)
 
     def __repr__(self):
         stereo = "Stereo" if self._stereo else "Mono"
-        return "WAV File {}:\n " \
+        return "WAV File {}:\n" \
                "{} kHz, {}, BPM: {}\n " \
                "{} bars\n " \
                "PitchArray:\n" \
                "{}".format(self._file, self._samplerate, stereo,
+                           self._bpm, self._bar_count, self._pitch)
+
+    def html_repr(self):
+        stereo = "Stereo" if self._stereo else "Mono"
+        return "WAV File <span style='color: #ec407a'>{}</span>:<br>\n " \
+               "&nbsp;&nbsp;<span style='color: #43a047'>{}</span> kHz, " \
+               "<span style='color: #3f51b5'>{}</span>, " \
+               "BPM: <span style='color: #cddc39'>{}</span><br>\n " \
+               "&nbsp;&nbsp;<span style='color: #00bcd4'>{}</span> bars<br>\n " \
+               "&nbsp;&nbsp;PitchArray:<br>\n" \
+               "&nbsp;&nbsp;&nbsp;&nbsp;<span style='color: #7e57c2'>{}</span>"\
+            .format(self._file, self._samplerate, stereo,
                            self._bpm, self._bar_count, self._pitch)
 
     @property

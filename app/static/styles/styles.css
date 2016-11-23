@@ -1,0 +1,30 @@
+@font-face {
+    font-family: "Apercu Mono"; /* Имя шрифта */
+    src: url('../fonts/apercu-mono-webfont.ttf');
+   }
+.section, footer {
+    padding: 10px;
+}
+#header {
+    background-color: #ba68c8;
+    color: #fff;
+}
+#header_img {
+    max-height: 350px;
+}
+#body {
+    background-color: #fff;
+    color: #333;
+}
+#body h1, h2 {
+    color: #ba68c8;
+}
+#body h3, h4, h5, h6 {
+    color: #333;
+}
+#body .flashes {
+    color: #333;
+}
+code {
+    font-family: 'Apercu Mono', monospace;
+}
