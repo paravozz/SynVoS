@@ -1,48 +1,88 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-    <title>SynVoS Test Page</title>
-
-    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link type="text/css" rel="stylesheet"
-          href="{{ url_for('static', filename='styles/materialize.min.css') }}"  media="screen,projection"/>
-</head>
-<body class="container">
-    <h1>Upload WAV</h1>
-     <div class="row">
-         <form class="col s12" action="" method=post enctype=multipart/form-data>
-            <div class="row">
-               <label>Materialize File Input</label>
-               <div class="file-field input-field">
-                  <div class="btn purple">
-                     <span>Browse</span>
-                     <input type="file" name="file">
-                  </div>
-                  <div class="file-path-wrapper purple-text">
-                     <input class="file-path validate" type="text" placeholder="Upload file">
-                  </div>
-                   <input class="btn orange" type="submit">
-               </div>
+{% extends 'base.html' %}
+{% block content %}
+    <header>
+        <div class="section" id="header">
+        <div class="container">
+            <div class="row valign-wrapper">
+                <div class="col s12 m6 l6 valign">
+                    <h1>
+                        <span style="color: #000;">S</span>yn<span style="color: #000;">V</span>o<span style="color: #000;">S</span>
+                    </h1>
+                    <p class="flow-text">
+                        Способ сделать простую песню с поющим синтезированным голосом.
+                    </p>
+                </div>
+                <div class="col s12 m6 l6 center valign">
+                    <img id="header_img" class="responsive-img hide-on-small-only" height="300"
+                         src="{{ url_for('static', filename='imgs/head.png') }}" alt="wav logo">
+                </div>
             </div>
-         </form>
-      </div>
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul class=flashes>
-        {% for message in messages %}
-          <li><pre>{{ message }}</pre></li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-
-    <!-- SCRIPTS -->
-    <script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-3.1.1.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='scripts/materialize.min.js') }}"></script>
-</body>
-</html>
+        </div>
+        </div>
+    </header>
+    <div class="divider"></div>
+    <main>
+        <div class="section" id="body">
+        <div class="container">
+            <h2>Все очень просто</h2>
+            <div class="divider"></div>
+            <div class="row">
+                <form class="col s12 m12 l12" action="" method=post
+                      enctype=multipart/form-data>
+                    <div class="row">
+                        <div class="col s12 m6 l6">
+                            <h3>Загрузите звуковой файл</h3>
+                            <p>Песню, мелодию или сэмпл любого
+                                популярного музыкального формата</p>
+                            <div class="file-field input-field">
+                                <div class="waves-effect waves-light btn purple">
+                                    <span>Обзор</span>
+                                    <input type="file" name="file">
+                                </div>
+                                <div class="file-path-wrapper purple-text">
+                                    <input class="file-path validate" type="text"
+                                           placeholder="Upload file">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col s12 m6 l6">
+                            <h3>Введите текст песни</h3>
+                            <p>Текст, который будет пропет синтезатором речи</p>
+                            <div class="input-field">
+                                <textarea class="materialize-textarea"></textarea>
+                                <label for="textarea1">Text to sing</label>
+                            </div>
+                        </div>
+                        <div class="col s12 m12 l12 center">
+                            <input class="waves-effect waves-light btn purple lighten-2"
+                                   type="submit">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="flashes card-panel flow-text">
+                {% for message in messages %}
+                    <code>{{ message }}</code><br>
+                {% endfor %}
+                </div>
+                {% endif %}
+            {% endwith %}
+            <div class="divider"></div>
+            <div class="row">
+                <div class="col s12 m12 l12">
+                    <h3>Выберите фрагмент песни</h3>
+                    <p>Фрагмент, на котором хотите слышать пение</p>
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+    <div class="divider"></div>
+    <footer>
+    <div class="container">
+        <span class="flow-text">Copyright &copy; Ilya Perevoznik</span>
+    </div>
+    </footer>
+{% endblock %}

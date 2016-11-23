@@ -1,4 +1,6 @@
 #!flask/bin/python3
+from markupsafe import Markup
+
 from app import app, ALLOWED_EXTENSIONS, UPLOAD_FOLDER
 from flask import render_template, request, flash, redirect
 import os
@@ -30,9 +32,9 @@ def index():
             path = os.path.join(UPLOAD_FOLDER, filename)
             file.save(path)
             wav = WaveArray(path)
-            # wav.time_stretch(2)
-            # wav.save('/Volumes/multimedia/prvz/Desktop/UNIVERSITY/SynVoS/app/static/result.wav')
-            flash(wav)
+            wav.time_stretch(2)
+            wav.save('/Volumes/multimedia/prvz/Desktop/UNIVERSITY/SynVoS/app/static/result.wav')
+            flash(Markup(wav.html_repr()))
 
     return render_template("index.html")
 
