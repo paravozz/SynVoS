@@ -213,7 +213,7 @@ class WaveArray(object):
                                          self._hop_size, rate)
 
             self._wav_array = \
-                self._compose_channels(l_proc, r_proc).astype(np.int16)
+                self._compose_channels(l_proc, r_proc)
         else:
             samples = self._get_samples(self._wav_array, 'Mono')
             self._wav_array = \
@@ -231,8 +231,8 @@ class WaveArray(object):
 
         def shift(snd_array, n, win, hop):
             """ Changes the pitch of a sound by ``n`` semitones. """
-            fac = 2 ** (n / 12.0)
-            stretched = self._stretch_sound(snd_array, win, hop, fac)
+            fac = 2 ** (1.0 * n / 12.0)
+            stretched = self._stretch_sound(snd_array, win, hop, 1.0 / fac)
             return pitch(stretched[win:], fac)
 
         if self._stereo:
@@ -242,14 +242,14 @@ class WaveArray(object):
             l_proc = self._wav_array = shift(l,
                                              semitones,
                                              self._win_size,
-                                             self._hop_size).astype(np.int16)
+                                             self._hop_size)
             r_proc = self._wav_array = shift(r,
                                              semitones,
                                              self._win_size,
-                                             self._hop_size).astype(np.int16)
+                                             self._hop_size)
 
             self._wav_array = \
-                self._compose_channels(l_proc, r_proc).astype(np.int16)
+                self._compose_channels(l_proc, r_proc)
         else:
             samples = self._get_samples(self._wav_array, 'Mono')
             self._wav_array = shift(samples,
@@ -274,7 +274,7 @@ class WaveArray(object):
         return "WAV File <span style='color: #ec407a'>{}</span>:<br>\n " \
                "&nbsp;&nbsp;<span style='color: #43a047'>{}</span> kHz, " \
                "<span style='color: #3f51b5'>{}</span>, " \
-               "BPM: <span style='color: #cddc39'>{}</span><br>\n " \
+               "BPM: <span style='color: #ff5722'>{}</span><br>\n " \
                "&nbsp;&nbsp;<span style='color: #00bcd4'>{}</span> bars<br>\n " \
                "&nbsp;&nbsp;PitchArray:<br>\n" \
                "&nbsp;&nbsp;&nbsp;&nbsp;<span style='color: #7e57c2'>{}</span>"\

@@ -33,7 +33,7 @@ def index():
             file.save(path)
             wav = WaveArray(path)
             # wav.time_stretch(2)
-            wav.pitch_shift(3)
+            wav.pitch_shift(-5)
             wav.save('/Volumes/multimedia/prvz/Desktop/UNIVERSITY/SynVoS/app/static/result.wav')
             flash(Markup(wav.html_repr()))
 
