@@ -2,7 +2,7 @@
 from markupsafe import Markup
 
 from app import app, ALLOWED_EXTENSIONS, UPLOAD_FOLDER
-from flask import render_template, request, flash, redirect
+from flask import render_template, request, flash, redirect, url_for
 import os
 from werkzeug.utils import secure_filename
 from .controllers.WaveArray import WaveArray
@@ -13,29 +13,35 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
-def index():
+@app.route('/file_upload', methods=['GET', 'POST'])
+def file_upload():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
-            return redirect(request.url)
+            # return redirect(request.url)
         file = request.files['file']
         # if user does not select file, browser also
         # submit a empty part without filename
         if file.filename == '':
             flash('No selected file')
-            return redirect(request.url)
+            # return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             path = os.path.join(UPLOAD_FOLDER, filename)
             file.save(path)
             wav = WaveArray(path)
             # wav.time_stretch(2)
-            wav.pitch_shift(-5)
-            wav.save('/Volumes/multimedia/prvz/Desktop/UNIVERSITY/SynVoS/app/static/result.wav')
-            flash(Markup(wav.html_repr()))
+            # wav.pitch_shift(-5)
+            # wav.save(os.path.join(UPLOAD_FOLDER, 'result.wav'))
+            return Markup(wav.html_repr())
+            # flash(Markup(wav.html_repr()))
+    else:
+        return redirect(url_for('index'))
 
+
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
+def index():
     return render_template("index.html")
 

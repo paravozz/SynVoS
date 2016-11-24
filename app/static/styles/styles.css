@@ -25,6 +25,9 @@
 #body .flashes {
     color: #333;
 }
+/*#card-panel, #progress, #circle {*/
+    /*display: none;*/
+/*}*/
 code {
     font-family: 'Apercu Mono', monospace;
 }

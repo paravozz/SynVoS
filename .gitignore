@@ -2,3 +2,6 @@ flask
 __pycache__
 .idea
 setTimeStretch.py
+/app/templates/INDEX2.html
+/app/static/scripts/dropzone.js
+*.wav

@@ -1,0 +1,69 @@
+    <!-- SCRIPTS -->
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-3.1.1.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/materialize.min.js') }}"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.52/wavesurfer.min.js"></script>
+    <script>
+        $('#circle').hide();
+        $('#card-panel').hide();
+        $('#progress').hide();
+        $('#wav_status').hide();
+
+     function upload(file) {
+         if ($('#file-loader').get(0).files.length == 0) {
+             Materialize.toast('Пожалуйста, выберите файл.', 2000);
+         } else {
+             var xhr = new XMLHttpRequest();
+             var percentage = 0;
+
+             // обработчик для закачки
+             xhr.upload.onprogress = function (event) {
+                 percentage = (100 * event.loaded) / event.total;
+                 $('#bar').css("width", percentage + "%");
+
+                 if (percentage == 100) {
+                     Materialize.toast('Файл отправлен.', 1000);
+                     $('#progress').hide();
+                     Materialize.toast('Обработка файла...', 2500);
+                     $('#wav_status').text("Обработка файла...");
+                     $('#circle').show();
+                     $('#bar').css("width", "0");
+                 }
+             };
+             // обработчики успеха и ошибки
+             // если status == 200, то это успех, иначе ошибка
+             xhr.onload = xhr.onerror = function () {
+                 if (this.status == 200) {
+                     Materialize.toast('Файл обработан успешно.', 2000);
+                     $('#wav_status').text("Успешно!");
+                     $('#circle').hide();
+                     $('#card-panel').show();
+                     var data = xhr.responseText;
+                     $('#main-message').html(data);
+                 } else {
+                     $('#progress').hide();
+                     $('#circle').hide();
+                     Materialize.toast("Ошибка загрузки." + this.status, 2000);
+                     Materialize.toast("Пожалуйста, обновите страницу и попробуйте снова." + this.status, 2000);
+                 }
+             };
+
+             xhr.open("POST", "file_upload", true);
+             $('#progress').show();
+             $('#wav_status').show();
+             xhr.send(file);
+         }
+     }
+     $('#submit-song').click(function() {
+        event.preventDefault();
+         $('#card-panel').hide();
+         $('#wav_status').hide();
+        var input = $('#file-loader').get(0);
+        var file = input.files[0];
+        if (file) {
+            var form = $('#file-load-form')[0];
+            var form_data = new FormData(form);
+            upload(form_data);
+        }
+        return false;
+      });
+    </script>

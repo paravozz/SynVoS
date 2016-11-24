@@ -13,7 +13,7 @@
                     </p>
                 </div>
                 <div class="col s12 m6 l6 center valign">
-                    <img id="header_img" class="responsive-img hide-on-small-only" height="300"
+                    <img id="header_img" class="responsive-img hide-on-small-only"
                          src="{{ url_for('static', filename='imgs/head.png') }}" alt="wav logo">
                 </div>
             </div>
@@ -23,60 +23,84 @@
     <div class="divider"></div>
     <main>
         <div class="section" id="body">
-        <div class="container">
-            <h2>Все очень просто</h2>
-            <div class="divider"></div>
-            <div class="row">
-                <form class="col s12 m12 l12" action="" method=post
-                      enctype=multipart/form-data>
-                    <div class="row">
-                        <div class="col s12 m6 l6">
-                            <h3>Загрузите звуковой файл</h3>
-                            <p>Песню, мелодию или сэмпл любого
-                                популярного музыкального формата</p>
+            <div class="container">
+                <h2>Все очень просто</h2>
+                <div class="divider"></div>
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <h3>Загрузите звуковой файл</h3>
+                        <p class="flow-text">Песню, мелодию или сэмпл любого
+                            популярного музыкального формата</p>
+                        <form id="file-load-form" method='POST' enctype='multipart/form-data'>
                             <div class="file-field input-field">
                                 <div class="waves-effect waves-light btn purple">
                                     <span>Обзор</span>
-                                    <input type="file" name="file">
+                                    <input id="file-loader" type="file" name="file">
                                 </div>
                                 <div class="file-path-wrapper purple-text">
                                     <input class="file-path validate" type="text"
-                                           placeholder="Upload file">
+                                               placeholder="Загрузите файл">
                                 </div>
+                                <button id="submit-song"
+                                        class="waves-effect waves-light btn purple lighten-2 right">ОТПРАВИТЬ</button>
                             </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 m12 l12 center center-align text-center">
+                        <div id="circle" class="preloader-wrapper big active center">
+                                <div class="spinner-layer spinner-red-only center">
+                                    <div class="circle-clipper left">
+                                        <div class="circle"></div>
+                                    </div>
+                                    <div class="gap-patch">
+                                        <div class="circle"></div>
+                                    </div>
+                                    <div class="circle-clipper right">
+                                        <div class="circle"></div>
+                                    </div>
+                                </div>
                         </div>
-                        <div class="col s12 m6 l6">
-                            <h3>Введите текст песни</h3>
-                            <p>Текст, который будет пропет синтезатором речи</p>
-                            <div class="input-field">
-                                <textarea class="materialize-textarea"></textarea>
-                                <label for="textarea1">Text to sing</label>
-                            </div>
+                        <div id="progress" class="progress">
+                            <div id="bar" class="determinate purple" style="width: 0"></div>
                         </div>
-                        <div class="col s12 m12 l12 center">
-                            <input class="waves-effect waves-light btn purple lighten-2"
-                                   type="submit">
+                        <p id="wav_status" class="flow-text">Отправляем файл</p>
+                    </div>
+                </div>
+                <div id="card-panel" class="card-panel flow-text pink lighten-5">
+                    <code id="main-message"></code>
+                </div>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <div class="flashes card-panel flow-text pink lighten-5">
+                    {% for message in messages %}
+                        <code>{{ message }}</code><br>
+                    {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="divider"></div>
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <h3>Выберите фрагмент песни</h3>
+                        <p class="flow-text">Фрагмент, на котором хотите слышать пение</p>
+                        <button id="test" class="waves-effect waves-light btn purple lighten-2">ВОЛНА</button>
+                        <div id="waveform"></div>
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <h3>Введите текст песни</h3>
+                        <p class="flow-text">Текст, который будет пропет синтезатором речи</p>
+                        <div class="input-field">
+                            <textarea class="materialize-textarea purple-text"></textarea>
+                            <label for="textarea1">Text to sing</label>
                         </div>
                     </div>
-                </form>
-            </div>
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <div class="flashes card-panel flow-text pink lighten-5">
-                {% for message in messages %}
-                    <code>{{ message }}</code><br>
-                {% endfor %}
-                </div>
-                {% endif %}
-            {% endwith %}
-            <div class="divider"></div>
-            <div class="row">
-                <div class="col s12 m12 l12">
-                    <h3>Выберите фрагмент песни</h3>
-                    <p>Фрагмент, на котором хотите слышать пение</p>
                 </div>
             </div>
-        </div>
         </div>
     </main>
     <div class="divider"></div>
