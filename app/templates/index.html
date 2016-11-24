@@ -26,7 +26,7 @@
             <div class="container">
                 <h2>Все очень просто</h2>
                 <div class="divider"></div>
-                <div class="row">
+                <div class="row" id="step1">
                     <div class="col s12 m12 l12">
                         <h3>Загрузите звуковой файл</h3>
                         <p class="flow-text">Песню, мелодию или сэмпл любого
@@ -49,6 +49,7 @@
                 </div>
                 <div class="row">
                     <div class="col s12 m12 l12 center center-align text-center">
+                        <p id="wav_status" class="flow-text">Отправляем файл</p>
                         <div id="circle" class="preloader-wrapper big active center">
                                 <div class="spinner-layer spinner-red-only center">
                                     <div class="circle-clipper left">
@@ -65,7 +66,6 @@
                         <div id="progress" class="progress">
                             <div id="bar" class="determinate purple" style="width: 0"></div>
                         </div>
-                        <p id="wav_status" class="flow-text">Отправляем файл</p>
                     </div>
                 </div>
                 <div id="card-panel" class="card-panel flow-text pink lighten-5">
@@ -81,11 +81,10 @@
                     {% endif %}
                 {% endwith %}
                 <div class="divider"></div>
-                <div class="row">
+                <div class="row" id="step2">
                     <div class="col s12 m12 l12">
                         <h3>Выберите фрагмент песни</h3>
                         <p class="flow-text">Фрагмент, на котором хотите слышать пение</p>
-                        <button id="test" class="waves-effect waves-light btn purple lighten-2">ВОЛНА</button>
                         <div id="waveform"></div>
                     </div>
                 </div>

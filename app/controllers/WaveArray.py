@@ -16,6 +16,15 @@ class WaveArray(object):
         self._stereo = True if type(wav_array[0]) is np.ndarray else False
         self._wav_array = wav_array
 
+        self._duration = \
+            self._bpm = \
+            self._bar_len = \
+            self._bar_count = \
+            self._pitch = 0
+
+        self._process_wav();
+
+    def _process_wav(self):
         self._duration = len(self._wav_array) / self._samplerate
         self._bpm = self._get_bpm()
         self._bar_len = self._bpm / 60
@@ -222,6 +231,8 @@ class WaveArray(object):
                                     self._hop_size,
                                     rate).astype(np.int16)
 
+        self._process_wav()
+
     def pitch_shift(self, semitones):
         def pitch(snd_array, factor):
             """ Multiplies the sound's speed by some `factor` """
@@ -256,6 +267,8 @@ class WaveArray(object):
                                     semitones,
                                     self._win_size,
                                     self._hop_size).astype(np.int16)
+
+        self._process_wav()
 
     def save(self, file_path):
         waveio.write(file_path, self._samplerate, self._wav_array)

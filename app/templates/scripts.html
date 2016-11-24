@@ -8,10 +8,7 @@
         $('#progress').hide();
         $('#wav_status').hide();
 
-     function upload(file) {
-         if ($('#file-loader').get(0).files.length == 0) {
-             Materialize.toast('Пожалуйста, выберите файл.', 2000);
-         } else {
+     function upload(file, name) {
              var xhr = new XMLHttpRequest();
              var percentage = 0;
 
@@ -19,6 +16,7 @@
              xhr.upload.onprogress = function (event) {
                  percentage = (100 * event.loaded) / event.total;
                  $('#bar').css("width", percentage + "%");
+                 $('#wav_status').text("Отправка файла...");
 
                  if (percentage == 100) {
                      Materialize.toast('Файл отправлен.', 1000);
@@ -36,34 +34,46 @@
                      Materialize.toast('Файл обработан успешно.', 2000);
                      $('#wav_status').text("Успешно!");
                      $('#circle').hide();
-                     $('#card-panel').show();
+                     // $('#card-panel').show();
                      var data = xhr.responseText;
                      $('#main-message').html(data);
+                     wavesurfer.load('/static/audio/' + name);
                  } else {
                      $('#progress').hide();
                      $('#circle').hide();
                      Materialize.toast("Ошибка загрузки." + this.status, 2000);
                      Materialize.toast("Пожалуйста, обновите страницу и попробуйте снова." + this.status, 2000);
+                      $('#step1').show();
                  }
              };
 
              xhr.open("POST", "file_upload", true);
              $('#progress').show();
              $('#wav_status').show();
+             $('#step1').hide();
              xhr.send(file);
-         }
      }
      $('#submit-song').click(function() {
         event.preventDefault();
-         $('#card-panel').hide();
-         $('#wav_status').hide();
-        var input = $('#file-loader').get(0);
-        var file = input.files[0];
-        if (file) {
-            var form = $('#file-load-form')[0];
-            var form_data = new FormData(form);
-            upload(form_data);
-        }
-        return false;
+         if ($('#file-loader').get(0).files.length == 0) {
+             Materialize.toast('Пожалуйста, выберите файл.', 2000);
+         } else {
+             $('#card-panel').hide();
+             $('#wav_status').hide();
+             var input = $('#file-loader').get(0);
+             var file = input.files[0];
+
+             if (file) {
+                 var form = $('#file-load-form')[0];
+                 var form_data = new FormData(form);
+                 upload(form_data, file.name)
+             }
+             return false;
+         }
       });
+     var wavesurfer = WaveSurfer.create({
+        container: '#waveform',
+        waveColor: 'violet',
+        progressColor: 'purple'
+     });
     </script>
