@@ -2,7 +2,7 @@
 from markupsafe import Markup
 
 from app import app, ALLOWED_EXTENSIONS, UPLOAD_FOLDER
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for, jsonify
 import os
 from werkzeug.utils import secure_filename
 from .controllers.WaveArray import WaveArray
@@ -34,8 +34,17 @@ def file_upload():
             # wav.time_stretch(2)
             # wav.pitch_shift(-5)
             # wav.save(os.path.join(UPLOAD_FOLDER, 'result.wav'))
-            return Markup(wav.html_repr())
+            # return Markup(wav.html_repr())
             # flash(Markup(wav.html_repr()))
+            res = {
+                'represent': wav.html_repr(),
+                'file': wav.file_path,
+                'bpm': wav.bpm,
+                'stereo': wav.stereo,
+                'bars': wav.bars,
+                'bar_len': wav.bar_len
+            }
+            return jsonify(res)
     else:
         return redirect(url_for('index'))
 

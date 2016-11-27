@@ -8,6 +8,7 @@ class WaveArray(object):
 
     def __init__(self, file_path, win_size=1024):
         self._file = file_path.split('/')[-1]
+        self._file_path = file_path
 
         self._win_size = win_size
         self._hop_size = win_size // 8  # TODO: 4 or 8
@@ -22,7 +23,7 @@ class WaveArray(object):
             self._bar_count = \
             self._pitch = 0
 
-        self._process_wav();
+        self._process_wav()
 
     def _process_wav(self):
         self._duration = len(self._wav_array) / self._samplerate
@@ -313,3 +314,11 @@ class WaveArray(object):
     @property
     def bars(self):
         return self._bar_count
+
+    @property
+    def file_path(self):
+        return self._file_path
+
+    @property
+    def bar_len(self):
+        return self._bar_len

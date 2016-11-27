@@ -2,11 +2,15 @@
     <script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-3.1.1.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='scripts/materialize.min.js') }}"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.52/wavesurfer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.2.3/plugin/wavesurfer.regions.min.js"></script>
     <script>
         $('#circle').hide();
         $('#card-panel').hide();
         $('#progress').hide();
-        $('#wav_status').hide();
+        $('#wav-status').hide();
+        $('#play-button').hide();
+        $('#waveform').hide();
+        var bar_len;
 
      function upload(file, name) {
              var xhr = new XMLHttpRequest();
@@ -16,13 +20,13 @@
              xhr.upload.onprogress = function (event) {
                  percentage = (100 * event.loaded) / event.total;
                  $('#bar').css("width", percentage + "%");
-                 $('#wav_status').text("Отправка файла...");
+                 $('#wav-status').text("Отправка файла...");
 
                  if (percentage == 100) {
                      Materialize.toast('Файл отправлен.', 1000);
                      $('#progress').hide();
                      Materialize.toast('Обработка файла...', 2500);
-                     $('#wav_status').text("Обработка файла...");
+                     $('#wav-status').text("Обработка файла...");
                      $('#circle').show();
                      $('#bar').css("width", "0");
                  }
@@ -32,15 +36,22 @@
              xhr.onload = xhr.onerror = function () {
                  if (this.status == 200) {
                      Materialize.toast('Файл обработан успешно.', 2000);
-                     $('#wav_status').text("Успешно!");
+                     $('#wav-status').text("Успешно!");
                      $('#circle').hide();
                      // $('#card-panel').show();
-                     var data = xhr.responseText;
-                     $('#main-message').html(data);
+                     var data = JSON.parse(xhr.responseText);
+                     $('#card-panel').show();
+                     $('#main-message').html(data.represent);
+                     $('#waveform').show();
+                     bar_len = data.bar_len;
                      wavesurfer.load('/static/audio/' + name);
+                     $('#play-button').show();
                  } else {
                      $('#progress').hide();
                      $('#circle').hide();
+                     $('#play-button').hide();
+                     $('#card-panel').hide();
+                     $('#waveform').hide();
                      Materialize.toast("Ошибка загрузки." + this.status, 2000);
                      Materialize.toast("Пожалуйста, обновите страницу и попробуйте снова." + this.status, 2000);
                       $('#step1').show();
@@ -49,7 +60,7 @@
 
              xhr.open("POST", "file_upload", true);
              $('#progress').show();
-             $('#wav_status').show();
+             $('#wav-status').show();
              $('#step1').hide();
              xhr.send(file);
      }
@@ -59,7 +70,8 @@
              Materialize.toast('Пожалуйста, выберите файл.', 2000);
          } else {
              $('#card-panel').hide();
-             $('#wav_status').hide();
+             $('#wav-status').hide();
+             $('#waveform').hide();
              var input = $('#file-loader').get(0);
              var file = input.files[0];
 
@@ -75,5 +87,19 @@
         container: '#waveform',
         waveColor: 'violet',
         progressColor: 'purple'
+     });
+     $(window).resize(function() {
+        wavesurfer.empty();
+        wavesurfer.drawBuffer();
+     });
+     wavesurfer.on('ready', function () {
+
+         wavesurfer.addRegion({
+             color: 'rgba(186, 104, 200, 0.5)',
+             loop: true,
+             resize: false,
+             start: 0,
+             end: bar_len
+         });
      });
     </script>
