@@ -1,6 +1,7 @@
     <!-- SCRIPTS -->
     <script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-3.1.1.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='scripts/materialize.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/timeline.js') }}"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.52/wavesurfer.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.2.3/plugin/wavesurfer.regions.min.js"></script>
     <script>
@@ -10,9 +11,14 @@
         $('#wav-status').hide();
         $('#play-button').hide();
         $('#waveform').hide();
-        var bar_len;
+        var bar_len = 0;
+        var bar_count = 0;
 
-     function upload(file, name) {
+        $(function(){
+            $().timelinr();
+        });
+
+        function upload(file, name) {
              var xhr = new XMLHttpRequest();
              var percentage = 0;
 
@@ -63,43 +69,74 @@
              $('#wav-status').show();
              $('#step1').hide();
              xhr.send(file);
-     }
-     $('#submit-song').click(function() {
-        event.preventDefault();
-         if ($('#file-loader').get(0).files.length == 0) {
-             Materialize.toast('Пожалуйста, выберите файл.', 2000);
-         } else {
-             $('#card-panel').hide();
-             $('#wav-status').hide();
-             $('#waveform').hide();
-             var input = $('#file-loader').get(0);
-             var file = input.files[0];
+        }
 
-             if (file) {
-                 var form = $('#file-load-form')[0];
-                 var form_data = new FormData(form);
-                 upload(form_data, file.name)
+         $('#submit-song').click(function() {
+            event.preventDefault();
+             if ($('#file-loader').get(0).files.length == 0) {
+                 Materialize.toast('Пожалуйста, выберите файл.', 2000);
+             } else {
+                 $('#card-panel').hide();
+                 $('#wav-status').hide();
+                 $('#waveform').hide();
+                 var input = $('#file-loader').get(0);
+                 var file = input.files[0];
+
+                 if (file) {
+                     var form = $('#file-load-form')[0];
+                     var form_data = new FormData(form);
+                     upload(form_data, file.name)
+                 }
+                 return false;
              }
-             return false;
-         }
-      });
-     var wavesurfer = WaveSurfer.create({
-        container: '#waveform',
-        waveColor: 'violet',
-        progressColor: 'purple'
-     });
-     $(window).resize(function() {
-        wavesurfer.empty();
-        wavesurfer.drawBuffer();
-     });
-     wavesurfer.on('ready', function () {
+          });
 
-         wavesurfer.addRegion({
-             color: 'rgba(186, 104, 200, 0.5)',
-             loop: true,
-             resize: false,
-             start: 0,
-             end: bar_len
+         var wavesurfer = WaveSurfer.create({
+            container: '#waveform',
+            waveColor: 'violet',
+            progressColor: 'purple'
          });
-     });
+
+         $(window).resize(function() {
+            wavesurfer.empty();
+            wavesurfer.drawBuffer();
+         });
+
+         wavesurfer.on('ready', function () {
+             wavesurfer.addRegion({
+                 color: 'rgba(186, 104, 200, 0.5)',
+                 loop: true,
+                 resize: false,
+                 start: 0,
+                 end: bar_len * bar_count
+             });
+         });
+
+         var textarea = $('#song-text');
+         textarea.keyup(function() {
+            var lines = textarea.val().split("\n");
+
+            if (textarea.val().length > 0) {
+                bar_count = Math.ceil(lines.length / 4);
+                $('#bar-counter').text(bar_count);
+            } else {
+                bar_count = 0;
+                $('#bar-counter').text(bar_count);
+
+            }
+
+            for (var i = 0; i < lines.length; i++) {
+                lines[i] = lines[i][0].toUpperCase() + lines[i].slice(1);
+                if (lines[i].length <= 32) continue;
+                var j = 0;
+                var space = 32;
+                while (j++ <= 32) {
+                    if (lines[i].charAt(j) === " ") space = j;
+                }
+                lines[i + 1] = lines[i].substring(space + 1) + (lines[i + 1] || "");
+                lines[i] = lines[i].substring(0, space);
+            }
+            textarea.val(lines.join("\n"));
+    {#        textarea.val(lines.slice(0, 4).join("\n"));#}
+         });
     </script>

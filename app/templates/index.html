@@ -3,8 +3,8 @@
     <header>
         <div class="section" id="header">
         <div class="container">
-            <div class="row valign-wrapper">
-                <div class="col s12 m6 l6 valign">
+            <div class="row">
+                <div class="col s12 m6 l6">
                     <h1>
                         <span style="color: #000;">S</span>yn<span style="color: #000;">V</span>o<span style="color: #000;">S</span>
                     </h1>
@@ -14,7 +14,7 @@
                 </div>
                 <div class="col s12 m6 l6 center valign">
                     <img id="header_img" class="responsive-img hide-on-small-only"
-                         src="{{ url_for('static', filename='imgs/head.png') }}" alt="wav logo">
+                         src="{{ url_for('static', filename='imgs/head.png') }}" alt="logo">
                 </div>
             </div>
         </div>
@@ -42,13 +42,13 @@
                                                placeholder="Загрузите файл">
                                 </div>
                                 <button id="submit-song"
-                                        class="waves-effect waves-light btn purple lighten-2 right">ОТПРАВИТЬ</button>
+                                        class="waves-effect waves-light btn purple lighten-2 right">Отправить</button>
                             </div>
                         </form>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col s12 m12 l12 center center-align text-center">
+                    <div class="col s12 m12 l12 center">
                         <p id="wav-status" class="flow-text">Отправляем файл</p>
                         <div id="circle" class="preloader-wrapper big active center">
                                 <div class="spinner-layer spinner-red-only center">
@@ -82,22 +82,33 @@
                 {% endwith %}
                 <div class="divider"></div>
                 <div class="row" id="step2">
+                    <div class="col s12 m12 l12 valign-wrapper">
+                        <div class="col s12 m6 l6">
+                            <h3>Введите текст песни</h3>
+                            <p class="flow-text">Текст, который будет пропет синтезатором речи</p>
+                        </div>
+                        <div class="col s12 m6 l6 center-align valign">
+                            <div class="input-field">
+                                <textarea id="song-text" cols="32" wrap="hard"
+                                          class="materialize-textarea pink-text"></textarea>
+                                <label class="purple-text" for="song-text">Текст песни</label>
+                            </div>
+                            <button class="waves-effect waves-light btn purple lighten-2 right"
+                                    onclick="alert($('#song-text').val());">Готово</button>
+                            <span>Кол-во тактов: <strong id="bar-counter" class="pink-text">0</strong></span>
+                        </div>
+                    </div>
+                    <div class="col s12 m12 l12 card-panel">
+                        <blockquote>Внимание!<br>От количества введенных строк зависит размер отрезка песни, который будет результатом работы этого приложения.</blockquote>
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row" id="step3">
                     <div class="col s12 m12 l12">
                         <h3>Выберите фрагмент песни</h3>
                         <p class="flow-text">Фрагмент, на котором хотите слышать пение</p>
                         <div id="waveform"></div>
-                        <button id="play-button" class="waves-effect waves-light btn purple lighten-2 center" onclick="wavesurfer.playPause()"><i class="material-icons">play_arrow</i><i class="material-icons">pause</i></button>
-                    </div>
-                </div>
-                <div class="divider"></div>
-                <div class="row">
-                    <div class="col s12 m12 l12">
-                        <h3>Введите текст песни</h3>
-                        <p class="flow-text">Текст, который будет пропет синтезатором речи</p>
-                        <div class="input-field">
-                            <textarea class="materialize-textarea purple-text"></textarea>
-                            <label for="textarea1">Text to sing</label>
-                        </div>
+                        <button id="play-button" class="waves-effect waves-light btn purple lighten-2" onclick="wavesurfer.playPause()"><i class="material-icons">play_arrow</i><i class="material-icons">pause</i></button>
                     </div>
                 </div>
             </div>
@@ -106,7 +117,14 @@
     <div class="divider"></div>
     <footer>
     <div class="container">
-        <span class="flow-text">Copyright &copy; Ilya Perevoznik</span>
+        <div class="row">
+            <div class="col s12 m6 l6">
+                <p class="flow-text left-align">Copyright &copy; Ilya Perevoznik 2016</p>
+            </div>
+            <div class="col s12 m6 l6 right">
+                <a class="right" href="https://speechkit.yandex.ru/" target="_blank"><img src="https://goo.gl/PK971w" height="80" alt="Yandex SpeechKit"></a>
+            </div>
+        </div>
     </div>
     </footer>
 {% endblock %}
