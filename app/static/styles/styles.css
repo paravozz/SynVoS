@@ -31,3 +31,7 @@
 code {
     font-family: 'Apercu Mono', monospace;
 }
+.wavesurfer-region {
+    background-color: rgba(186, 104, 200, 0.3) !important;
+    border: dashed 4px rgba(171, 71, 188, 0.5);
+}

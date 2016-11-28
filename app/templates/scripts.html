@@ -1,7 +1,6 @@
     <!-- SCRIPTS -->
     <script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-3.1.1.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='scripts/materialize.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='scripts/timeline.js') }}"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.52/wavesurfer.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.2.3/plugin/wavesurfer.regions.min.js"></script>
     <script>
@@ -11,15 +10,16 @@
         $('#wav-status').hide();
         $('#play-button').hide();
         $('#waveform').hide();
-        var bar_len = 0;
-        var bar_count = 0;
+        var wave_success = false;
+        var text_bar_count = 0;
+        var stereo = false;
+        var processed_wav;
+        var textarea = $('#song-text');
+        var wavesurfer = undefined;
 
-        $(function(){
-            $().timelinr();
-        });
-
-        function upload(file, name) {
+        function upload(file) {
              var xhr = new XMLHttpRequest();
+             wave_success = false;
              var percentage = 0;
 
              // обработчик для закачки
@@ -45,13 +45,11 @@
                      $('#wav-status').text("Успешно!");
                      $('#circle').hide();
                      // $('#card-panel').show();
-                     var data = JSON.parse(xhr.responseText);
+                     processed_wav = JSON.parse(xhr.responseText);
                      $('#card-panel').show();
-                     $('#main-message').html(data.represent);
-                     $('#waveform').show();
-                     bar_len = data.bar_len;
-                     wavesurfer.load('/static/audio/' + name);
-                     $('#play-button').show();
+                     $('#main-message').html(processed_wav.represent);
+
+                     wave_success = true;
                  } else {
                      $('#progress').hide();
                      $('#circle').hide();
@@ -60,7 +58,8 @@
                      $('#waveform').hide();
                      Materialize.toast("Ошибка загрузки." + this.status, 2000);
                      Materialize.toast("Пожалуйста, обновите страницу и попробуйте снова." + this.status, 2000);
-                      $('#step1').show();
+                     $('#step1').show();
+                     wave_success = true;
                  }
              };
 
@@ -85,43 +84,21 @@
                  if (file) {
                      var form = $('#file-load-form')[0];
                      var form_data = new FormData(form);
-                     upload(form_data, file.name)
+                     upload(form_data)
                  }
                  return false;
              }
           });
 
-         var wavesurfer = WaveSurfer.create({
-            container: '#waveform',
-            waveColor: 'violet',
-            progressColor: 'purple'
-         });
-
-         $(window).resize(function() {
-            wavesurfer.empty();
-            wavesurfer.drawBuffer();
-         });
-
-         wavesurfer.on('ready', function () {
-             wavesurfer.addRegion({
-                 color: 'rgba(186, 104, 200, 0.5)',
-                 loop: true,
-                 resize: false,
-                 start: 0,
-                 end: bar_len * bar_count
-             });
-         });
-
-         var textarea = $('#song-text');
          textarea.keyup(function() {
             var lines = textarea.val().split("\n");
 
             if (textarea.val().length > 0) {
-                bar_count = Math.ceil(lines.length / 4);
-                $('#bar-counter').text(bar_count);
+                text_bar_count = Math.ceil(lines.length / 4);
+                $('#bar-counter').text(text_bar_count);
             } else {
-                bar_count = 0;
-                $('#bar-counter').text(bar_count);
+                text_bar_count = 0;
+                $('#bar-counter').text(text_bar_count);
 
             }
 
@@ -139,4 +116,68 @@
             textarea.val(lines.join("\n"));
     {#        textarea.val(lines.slice(0, 4).join("\n"));#}
          });
+
+         $('#text_done').click(function () {
+            var isCyrillic = function (text) {
+                return /[а-я]/i.test(text);
+            };
+            var lines = textarea.val().split("\n");
+            var lang = isCyrillic(textarea.val()) ? 'ru-RU' : 'en-US';
+            var speaker = $('#voice-select').prop('checked') ? 'jane': 'zahar';
+            var reqdata = {
+                'lines': lines,
+                'lang': lang,
+                'speaker': speaker
+            };
+
+            $.post({
+                url: '/text-generated',
+                data: JSON.stringify(reqdata),
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function(response) {
+                    console.log(response);
+                }
+            });
+{#             if (textarea.val().length == 0) {#}
+{#                 Materialize.toast("Пожалуйста, заполните поле текста", 1000);#}
+{#             } else if (wave_success == false) {#}
+{#                 Materialize.toast("Пожалуйста, подождите пока обработается файл", 1000);#}
+{#             } else {#}
+{#                  if (wavesurfer != undefined) {#}
+{#                      wavesurfer.empty();#}
+{#                      $('#waveform').html("");#}
+{#                      $('#play-button').hide();#}
+{#                  }#}
+{##}
+{#                  wavesurfer = WaveSurfer.create({#}
+{#                    container: '#waveform',#}
+{#                    waveColor: 'violet',#}
+{#                    progressColor: 'purple',#}
+{#                    splitChannels: processed_wav.stereo#}
+{#                  });#}
+{##}
+{#                   wavesurfer.on('ready', function () {#}
+{#                       wavesurfer.addRegion({#}
+{#                            loop: true,#}
+{#                            resize: false,#}
+{#                            start: 0,#}
+{#                            end: processed_wav.bar_len * text_bar_count#}
+{#                       });#}
+{#                       $('#play-button').show();#}
+{#                       $('#play-button').unbind('click');#}
+{#                       $('#play-button').bind('click', function() {#}
+{#                           wavesurfer.playPause();#}
+{#                       });#}
+{#                   });#}
+{##}
+{#                  $(window).resize(function() {#}
+{#                    wavesurfer.empty();#}
+{#                    wavesurfer.drawBuffer();#}
+{#                  });#}
+{##}
+{#                  $('#waveform').show();#}
+{#                  wavesurfer.load(processed_wav.file);#}
+{#             }#}
+         })
     </script>

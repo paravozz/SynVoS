@@ -12,7 +12,7 @@
                         Способ сделать простую песню с поющим синтезированным голосом.
                     </p>
                 </div>
-                <div class="col s12 m6 l6 center valign">
+                <div class="col s12 m6 l6 center-align valign">
                     <img id="header_img" class="responsive-img hide-on-small-only"
                          src="{{ url_for('static', filename='imgs/head.png') }}" alt="logo">
                 </div>
@@ -93,9 +93,17 @@
                                           class="materialize-textarea pink-text"></textarea>
                                 <label class="purple-text" for="song-text">Текст песни</label>
                             </div>
-                            <button class="waves-effect waves-light btn purple lighten-2 right"
-                                    onclick="alert($('#song-text').val());">Готово</button>
-                            <span>Кол-во тактов: <strong id="bar-counter" class="pink-text">0</strong></span>
+                            <button id="text_done" class="waves-effect waves-light btn purple lighten-2 right">Готово</button>
+                            <span>Голос: </span>
+                            <div class="switch">
+                                <label>
+                                    Мужской
+                                    <input id="voice-select" type="checkbox">
+                                    <span class="lever"></span>
+                                    Женский
+                                </label>
+                            </div>
+                            <span><br>Кол-во тактов: <strong id="bar-counter" class="pink-text">0</strong></span>
                         </div>
                     </div>
                     <div class="col s12 m12 l12 card-panel">
@@ -108,7 +116,7 @@
                         <h3>Выберите фрагмент песни</h3>
                         <p class="flow-text">Фрагмент, на котором хотите слышать пение</p>
                         <div id="waveform"></div>
-                        <button id="play-button" class="waves-effect waves-light btn purple lighten-2" onclick="wavesurfer.playPause()"><i class="material-icons">play_arrow</i><i class="material-icons">pause</i></button>
+                        <button id="play-button" class="waves-effect waves-light btn purple lighten-2"><i class="material-icons">play_arrow</i><i class="material-icons">pause</i></button>
                     </div>
                 </div>
             </div>
@@ -122,7 +130,7 @@
                 <p class="flow-text left-align">Copyright &copy; Ilya Perevoznik 2016</p>
             </div>
             <div class="col s12 m6 l6 right">
-                <a class="right" href="https://tech.yandex.ru/speechkit/cloud/" target="_blank"><img src="https://goo.gl/PK971w" height="80" alt="Yandex SpeechKit"></a>
+                <a class="right" href="https://tech.yandex.ru/speechkit/cloud/" target="_blank"><img src="https://goo.gl/PK971w" alt="Yandex SpeechKit"></a>
             </div>
         </div>
     </div>
