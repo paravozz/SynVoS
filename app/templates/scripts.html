@@ -4,6 +4,9 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.52/wavesurfer.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.2.3/plugin/wavesurfer.regions.min.js"></script>
     <script>
+        $(document).ready(function () {
+            $('.modal').modal();
+        });
         $('#circle').hide();
         $('#card-panel').hide();
         $('#progress').hide();
@@ -11,8 +14,9 @@
         $('#play-button').hide();
         $('#waveform').hide();
         var wave_success = false;
+        var text_success = false;
         var text_bar_count = 0;
-        var stereo = false;
+        var loop_region;
         var processed_wav;
         var textarea = $('#song-text');
         var wavesurfer = undefined;
@@ -56,6 +60,7 @@
                      $('#play-button').hide();
                      $('#card-panel').hide();
                      $('#waveform').hide();
+                     $('#wav-status').hide();
                      Materialize.toast("Ошибка загрузки." + this.status, 2000);
                      Materialize.toast("Пожалуйста, обновите страницу и попробуйте снова." + this.status, 2000);
                      $('#step1').show();
@@ -94,7 +99,8 @@
             var lines = textarea.val().split("\n");
 
             if (textarea.val().length > 0) {
-                text_bar_count = Math.ceil(lines.length / 4);
+                text_bar_count = lines.length;
+{#                text_bar_count = Math.ceil(lines.length / 4);#}
                 $('#bar-counter').text(text_bar_count);
             } else {
                 text_bar_count = 0;
@@ -118,66 +124,90 @@
          });
 
          $('#text_done').click(function () {
-            var isCyrillic = function (text) {
-                return /[а-я]/i.test(text);
-            };
-            var lines = textarea.val().split("\n");
-            var lang = isCyrillic(textarea.val()) ? 'ru-RU' : 'en-US';
-            var speaker = $('#voice-select').prop('checked') ? 'jane': 'zahar';
-            var reqdata = {
-                'lines': lines,
-                'lang': lang,
-                'speaker': speaker
-            };
+            if (textarea.val().length == 0) {
+                Materialize.toast('Пожалуйста заполните поле текста', 1000);
+            } else {
+                var isCyrillic = function (text) {
+                    return /[а-я]/i.test(text);
+                };
+                var lines = textarea.val().split("\n");
+                var lang = isCyrillic(textarea.val()) ? 'ru-RU' : 'en-US';
+                var speaker = $('#voice-select').prop('checked') ? 'jane' : 'zahar';
+                var reqdata = {
+                    'lines': lines,
+                    'lang': lang,
+                    'speaker': speaker
+                };
+                text_success = false;
+                $.post({
+                    url: '/text-generated',
+                    data: JSON.stringify(reqdata),
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function () {
+                        Materialize.toast('Текст обработан успешно.', 2000);
+                        text_success = true;
+                    }
+                });
 
-            $.post({
+                if (text_success == true) {
+                    Materialize.toast("Пожалуйста, заполните поле текста или исправьте ошибки ввода", 1000);
+                } else if (wave_success == false) {
+                    Materialize.toast("Пожалуйста, подождите пока обработается файл", 1000);
+                } else {
+                    if (wavesurfer != undefined) {
+                        wavesurfer.empty();
+                        $('#waveform').html("");
+                        $('#play-button').hide();
+                    }
+
+                    wavesurfer = WaveSurfer.create({
+                        container: '#waveform',
+                        waveColor: 'violet',
+                        progressColor: 'purple',
+                        splitChannels: processed_wav.stereo
+                    });
+
+                    wavesurfer.on('ready', function () {
+                        loop_region = wavesurfer.addRegion({
+                            loop: true,
+                            resize: false,
+                            start: 0,
+                            end: processed_wav.bar_len * text_bar_count
+                        });
+                        $('#play-button').show();
+                        $('#play-button').unbind('click');
+                        $('#play-button').bind('click', function () {
+                            wavesurfer.playPause();
+                        });
+                    });
+
+                    $(window).resize(function () {
+                        wavesurfer.empty();
+                        wavesurfer.drawBuffer();
+                    });
+
+                    $('#waveform').show();
+                    wavesurfer.load(processed_wav.file);
+                }
+            }
+         });
+
+         $('#region-done').click(function () {
+             var region = {
+                 'start': loop_region.start,
+                 'end': loop_region.end
+             };
+
+             $.post({
                 url: '/text-generated',
-                data: JSON.stringify(reqdata),
+                data: JSON.stringify(region),
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
-                success: function(response) {
-                    console.log(response);
+                success: function () {
+                    Materialize.toast('Текст обработан успешно.', 2000);
+                    text_success = true;
                 }
-            });
-{#             if (textarea.val().length == 0) {#}
-{#                 Materialize.toast("Пожалуйста, заполните поле текста", 1000);#}
-{#             } else if (wave_success == false) {#}
-{#                 Materialize.toast("Пожалуйста, подождите пока обработается файл", 1000);#}
-{#             } else {#}
-{#                  if (wavesurfer != undefined) {#}
-{#                      wavesurfer.empty();#}
-{#                      $('#waveform').html("");#}
-{#                      $('#play-button').hide();#}
-{#                  }#}
-{##}
-{#                  wavesurfer = WaveSurfer.create({#}
-{#                    container: '#waveform',#}
-{#                    waveColor: 'violet',#}
-{#                    progressColor: 'purple',#}
-{#                    splitChannels: processed_wav.stereo#}
-{#                  });#}
-{##}
-{#                   wavesurfer.on('ready', function () {#}
-{#                       wavesurfer.addRegion({#}
-{#                            loop: true,#}
-{#                            resize: false,#}
-{#                            start: 0,#}
-{#                            end: processed_wav.bar_len * text_bar_count#}
-{#                       });#}
-{#                       $('#play-button').show();#}
-{#                       $('#play-button').unbind('click');#}
-{#                       $('#play-button').bind('click', function() {#}
-{#                           wavesurfer.playPause();#}
-{#                       });#}
-{#                   });#}
-{##}
-{#                  $(window).resize(function() {#}
-{#                    wavesurfer.empty();#}
-{#                    wavesurfer.drawBuffer();#}
-{#                  });#}
-{##}
-{#                  $('#waveform').show();#}
-{#                  wavesurfer.load(processed_wav.file);#}
-{#             }#}
-         })
+             });
+         });
     </script>

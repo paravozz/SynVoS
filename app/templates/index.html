@@ -104,6 +104,16 @@
                                 </label>
                             </div>
                             <span><br>Кол-во тактов: <strong id="bar-counter" class="pink-text">0</strong></span>
+                            <span><br><a class="modal-trigger" href="#modal-help-text">Помощь</a></span>
+                            <div id="modal-help-text" class="modal">
+                                <div class="modal-content">
+                                    <h4>Помощь при вводе текста песни</h4>
+                                    <p>Тут помощь</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Понятно</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col s12 m12 l12 card-panel">
@@ -116,7 +126,10 @@
                         <h3>Выберите фрагмент песни</h3>
                         <p class="flow-text">Фрагмент, на котором хотите слышать пение</p>
                         <div id="waveform"></div>
-                        <button id="play-button" class="waves-effect waves-light btn purple lighten-2"><i class="material-icons">play_arrow</i><i class="material-icons">pause</i></button>
+                        <button id="play-button" class="waves-effect waves-light purple lighten-2"><i class="material-icons">play_arrow</i><i class="material-icons">pause</i></button>
+                    </div>
+                    <div class="col s12 m12 l12">
+                        <button id="region-done" class="waves-effect waves-light btn pink lighten-2 right">Давай споём!</button>
                     </div>
                 </div>
             </div>
