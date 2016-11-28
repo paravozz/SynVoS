@@ -140,7 +140,7 @@
                 };
                 text_success = false;
                 $.post({
-                    url: '/text-generated',
+                    url: '/text_generated',
                     data: JSON.stringify(reqdata),
                     dataType: 'json',
                     contentType: 'application/json; charset=utf-8',
@@ -200,13 +200,12 @@
              };
 
              $.post({
-                url: '/text-generated',
+                url: '/region_done',
                 data: JSON.stringify(region),
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
-                success: function () {
-                    Materialize.toast('Текст обработан успешно.', 2000);
-                    text_success = true;
+                success: function (response) {
+                    window.location.href = response;
                 }
              });
          });

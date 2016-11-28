@@ -6,9 +6,11 @@ from aubio import tempo, pitch, pvoc, float_type, cvec, unwrap2pi
 
 class WaveArray(object):
 
-    def __init__(self, file_path, win_size=1024):
+    def __init__(self, file_path, win_size=1024, bpm=None, no_process=False):
         self._file = file_path.split('/')[-1]
         self._file_path = file_path
+
+        self._no_process = no_process
 
         self._win_size = win_size
         self._hop_size = win_size // 8  # TODO: 4 or 8
@@ -23,15 +25,20 @@ class WaveArray(object):
             self._bar_count = \
             self._pitch = 0
 
+        self._bpm = bpm
+
         self._process_wav()
 
     def _process_wav(self):
         self._duration = len(self._wav_array) / self._samplerate
-        self._bpm = self._get_bpm()
-        self._bar_len = self._bpm / 60
-        self._bar_count = int(np.floor(self._duration / self._bar_len))
 
-        self._pitch = self._get_pitch()
+        if not self._no_process:
+            if self._bpm is None:
+                self._bpm = self._get_bpm()
+            self._bar_len = self._bpm / 60
+            self._bar_count = int(np.floor(self._duration / self._bar_len))
+
+            self._pitch = self._get_pitch()
 
     @staticmethod
     def _get_samples(wav_array, chan='L+R'):
@@ -109,6 +116,9 @@ class WaveArray(object):
 
     def _get_pitch(self, tolerance=0.8):
         def process_pitch(pitch_array):
+            if self._bar_count == 0:
+                return round(np.median(pitch_array))
+
             bar_pitch_len = int(np.floor(len(pitch_array) / self._bar_count))
 
             pitch_bars = []
@@ -322,3 +332,7 @@ class WaveArray(object):
     @property
     def bar_len(self):
         return self._bar_len
+
+    @property
+    def duration(self):
+        return self._duration

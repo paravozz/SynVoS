@@ -1,20 +1,28 @@
 import os
+
+import numpy as np
 import requests
 
 from hashlib import md5
+
+from flask import url_for
 from werkzeug.utils import secure_filename
 
 from app import ALLOWED_EXTENSIONS, UPLOAD_FOLDER, YANDEX_API_KEY
 from .WaveArray import WaveArray
+from pydub import AudioSegment
 
 _VOICE_PATHS = []
-_WAV_INSTR = None
+_VOICE_SPEAKER = None
+_WAV_INSTR_PATH = None
+_WAV = None
 
 
 def process_text(req, sess_path):
     audios = []
     url = 'https://tts.voicetech.yandex.net/generate'
-
+    global _VOICE_SPEAKER
+    _VOICE_SPEAKER = req['speaker']
     for line in req['lines']:
         request_str = {
             'text': line,
@@ -33,7 +41,7 @@ def process_text(req, sess_path):
         with open(path, 'wb') as f:
             f.write(audio)
 
-        audio_paths += path
+        audio_paths += [path]
         i += 1
 
     global _VOICE_PATHS
@@ -71,8 +79,9 @@ def safe_save(file, sess_path):
 def get_wav_repr(path, sess_path, filename):
     wav = WaveArray(path)
 
-    global _WAV_INSTR
-    _WAV_INSTR = wav
+    global _WAV_INSTR_PATH, _WAV
+    _WAV_INSTR_PATH = path
+    _WAV = wav
 
     file_url = os.path.join('static/audio/', sess_path, filename)
     res = {
@@ -91,3 +100,52 @@ def create_sid(request):
     base = "{}|{}".format(request.remote_addr, request.headers.get("User-Agent"))
     hsh = md5(base.encode('utf-8', 'replace'))
     return hsh.hexdigest()
+
+
+def process_regions(region, sess_path):
+    instr = AudioSegment.from_wav(_WAV_INSTR_PATH)
+    start, end = region['start'] * 1000, region['end'] * 1000
+    instr = instr[start:end]
+
+    safe_path = os.path.join(UPLOAD_FOLDER, sess_path)
+    buf_path = os.path.join(safe_path, 'instrumental-buff.wav')
+    instr.export(buf_path, format='wav')
+    wav_instr = WaveArray(buf_path, bpm=_WAV.bpm)
+
+    voice_res = AudioSegment.empty()
+    i = 0
+    for path in _VOICE_PATHS:
+        segment = WaveArray(path, no_process=True)
+        # stretch_counter = segment.duration / _WAV.bar_len
+        stretch_counter = segment.duration / wav_instr.bar_len
+        segment.time_stretch(stretch_counter)
+        segment.save(path)
+        # wav_segment = WaveArray(path, bpm=_WAV.bpm)
+        wav_segment = WaveArray(path, bpm=wav_instr.bpm)
+        freq_diff = \
+            (12 / np.log(2)) * np.log(wav_segment.pitch[0] / wav_instr.pitch[i])
+
+        if freq_diff >= 0:
+            freq_diff %= 12
+        else:
+            freq_diff %= -12
+
+        if freq_diff < -6:
+            freq_diff += 12
+        elif freq_diff > 6:
+            freq_diff -= 12
+
+        print(freq_diff)
+        wav_segment.pitch_shift(freq_diff)
+        wav_segment.save(path)
+
+        voice_res += AudioSegment.from_wav(path)
+        i += 1
+
+    instr -= 3
+    voice_res += 6
+    print('voice {} \n instr {} \n'.format(voice_res.duration_seconds, instr.duration_seconds))
+    full_track = instr.overlay(voice_res)
+    full_track.export(os.path.join(safe_path, 'result.wav'), format='wav')
+    url = url_for('index') + 'static/' + 'audio/' + sess_path + '/result.wav'
+    return url

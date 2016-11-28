@@ -1,4 +1,5 @@
 from flask import Flask
+import os
 
 UPLOAD_FOLDER = '/Volumes/multimedia/prvz/Desktop/UNIVERSITY/SynVoS/app/static/audio'
 ALLOWED_EXTENSIONS = set(['wav'])
@@ -8,4 +9,6 @@ CLOUD_CONVERT_API_KEY = 'dZ4P-tNGKtwU5OIXmzD173oIMGPir_yreUUV3dBJRt-wGGbeHcR47Y1
 app = Flask(__name__)
 
 from app import views
+app.config['PROJECT_ROOT'] = os.path.abspath(os.path.dirname(__file__))
+app.config['STATICFILES_DIRS'] = (os.path.join(app.config['PROJECT_ROOT'], "static"))
 app.config['MAX_CONTENT_LENGTH'] = 40 * 1024 * 1024
