@@ -24,8 +24,8 @@ def file_upload():
         return 'No file part'
 
     file = request.files['file']
-    path = safe_save(file, session['_id'])
-    return jsonify(get_wav_repr(path, session['_id'], file.filename))
+    path, filename = safe_save(file, session['_id'])
+    return jsonify(get_wav_repr(path, session['_id'], filename))
 
 
 @app.route('/text_generated', methods=['POST'])
@@ -33,7 +33,7 @@ def text_process():
     if request.json:
         req = request.json
         if process_text(req, session['_id']):
-            return 'OK'
+            return jsonify('OK')
         else:
             return 'Error'
     else:

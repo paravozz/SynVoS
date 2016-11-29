@@ -6,11 +6,12 @@ from aubio import tempo, pitch, pvoc, float_type, cvec, unwrap2pi
 
 class WaveArray(object):
 
-    def __init__(self, file_path, win_size=1024, bpm=None, no_process=False):
+    def __init__(self, file_path, win_size=1024, bpm=None, no_process=False, no_pitch=False):
         self._file = file_path.split('/')[-1]
         self._file_path = file_path
 
         self._no_process = no_process
+        self._no_pitch = no_pitch
 
         self._win_size = win_size
         self._hop_size = win_size // 8  # TODO: 4 or 8
@@ -38,7 +39,8 @@ class WaveArray(object):
             self._bar_len = self._bpm / 60
             self._bar_count = int(np.floor(self._duration / self._bar_len))
 
-            self._pitch = self._get_pitch()
+            if not self._no_pitch:
+                self._pitch = self._get_pitch()
 
     @staticmethod
     def _get_samples(wav_array, chan='L+R'):

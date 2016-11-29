@@ -61,7 +61,7 @@ def safe_save(file, sess_path):
             os.mkdir(safe_path)
         path = os.path.join(safe_path, filename)
         file.save(path)
-        return path
+        return path, filename
     #
     # if file and allowed_file(file.filename):
     #     return path
@@ -77,7 +77,7 @@ def safe_save(file, sess_path):
 
 
 def get_wav_repr(path, sess_path, filename):
-    wav = WaveArray(path)
+    wav = WaveArray(path, no_pitch=True)
 
     global _WAV_INSTR_PATH, _WAV
     _WAV_INSTR_PATH = path
@@ -85,8 +85,6 @@ def get_wav_repr(path, sess_path, filename):
 
     file_url = os.path.join('static/audio/', sess_path, filename)
     res = {
-        'represent': wav.html_repr(),
-        # 'file': wav.file_path,
         'file': file_url,
         'bpm': wav.bpm,
         'stereo': wav.stereo,

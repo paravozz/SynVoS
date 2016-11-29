@@ -7,12 +7,16 @@
         $(document).ready(function () {
             $('.modal').modal();
         });
+        stepers = [$('#stepper-1'), $('#stepper-2'),$('#stepper-3'),$('#stepper-4')];
+        $('#step2').hide();
+        $('#step3').hide();
+        $('#step4').hide();
         $('#circle').hide();
-        $('#card-panel').hide();
         $('#progress').hide();
         $('#wav-status').hide();
         $('#play-button').hide();
         $('#waveform').hide();
+        $('#region-done').hide();
         var wave_success = false;
         var text_success = false;
         var text_bar_count = 0;
@@ -48,30 +52,32 @@
                      Materialize.toast('Файл обработан успешно.', 2000);
                      $('#wav-status').text("Успешно!");
                      $('#circle').hide();
-                     // $('#card-panel').show();
                      processed_wav = JSON.parse(xhr.responseText);
-                     $('#card-panel').show();
-                     $('#main-message').html(processed_wav.represent);
-
                      wave_success = true;
+                     stepers[0].addClass('step-done');
+                     stepers[1].addClass('active-step');
+                     $('#step1').hide();
+                     $('#step2').show();
                  } else {
                      $('#progress').hide();
                      $('#circle').hide();
                      $('#play-button').hide();
-                     $('#card-panel').hide();
                      $('#waveform').hide();
                      $('#wav-status').hide();
                      Materialize.toast("Ошибка загрузки." + this.status, 2000);
                      Materialize.toast("Пожалуйста, обновите страницу и попробуйте снова." + this.status, 2000);
-                     $('#step1').show();
-                     wave_success = true;
+                     $('#loader').show();
+                     wave_success = false;
+{#                     away_come(stepes[0], stepers[1]);#}
+                     stepers[0].removeClass('step-done');
+                     stepers[1].removeClass('active-step');
                  }
              };
 
              xhr.open("POST", "file_upload", true);
              $('#progress').show();
              $('#wav-status').show();
-             $('#step1').hide();
+             $('#loader').hide();
              xhr.send(file);
         }
 
@@ -80,7 +86,6 @@
              if ($('#file-loader').get(0).files.length == 0) {
                  Materialize.toast('Пожалуйста, выберите файл.', 2000);
              } else {
-                 $('#card-panel').hide();
                  $('#wav-status').hide();
                  $('#waveform').hide();
                  var input = $('#file-loader').get(0);
@@ -139,6 +144,7 @@
                     'speaker': speaker
                 };
                 text_success = false;
+                Materialize.toast('Обработка текста...', 2000);
                 $.post({
                     url: '/text_generated',
                     data: JSON.stringify(reqdata),
@@ -147,6 +153,16 @@
                     success: function () {
                         Materialize.toast('Текст обработан успешно.', 2000);
                         text_success = true;
+                        stepers[1].addClass('step-done');
+                        stepers[2].addClass('active-step');
+                        $('#step2').hide();
+                        $('#step3').show();
+                    },
+                    error: function () {
+                        stepers[1].removeClass('step-done');
+                        Materialize.toast('Ошибка обработки текста', 2000);
+                        text_success = false;
+                        stepers[2].removeClass('active-step');
                     }
                 });
 
@@ -159,6 +175,7 @@
                         wavesurfer.empty();
                         $('#waveform').html("");
                         $('#play-button').hide();
+                        $('#region-done').hide();
                     }
 
                     wavesurfer = WaveSurfer.create({
@@ -188,6 +205,7 @@
                     });
 
                     $('#waveform').show();
+                    $('#region-done').show();
                     wavesurfer.load(processed_wav.file);
                 }
             }
@@ -198,14 +216,26 @@
                  'start': loop_region.start,
                  'end': loop_region.end
              };
-
+             Materialize.toast('Обработка файла...', 2000);
              $.post({
                 url: '/region_done',
                 data: JSON.stringify(region),
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 success: function (response) {
-                    window.location.href = response;
+                    wavesurfer.pause();
+                    Materialize.toast('Готово!', 2000);
+                    stepers[2].addClass('step-done');
+                    stepers[3].addClass('active-step');
+                    $('#step3').hide();
+                    $('#step4').show();
+                    $('#audio-result').attr('src', response);
+                    $('#audio-href').attr('href', response);
+                },
+                error: function() {
+                    stepers[2].removeClass('step-done');
+                    stepers[3].removeClass('active-step');
+                    alert('error');
                 }
              });
          });

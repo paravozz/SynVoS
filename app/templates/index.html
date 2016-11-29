@@ -25,111 +25,151 @@
         <div class="section" id="body">
             <div class="container">
                 <h2>Все очень просто</h2>
-                <div class="divider"></div>
-                <div class="row" id="step1">
-                    <div class="col s12 m12 l12">
-                        <h3>Загрузите звуковой файл</h3>
-                        <p class="flow-text">Песню, мелодию или сэмпл любого
-                            популярного музыкального формата</p>
-                        <form id="file-load-form" method='POST' enctype='multipart/form-data'>
-                            <div class="file-field input-field">
-                                <div class="waves-effect waves-light btn purple">
-                                    <span>Обзор</span>
-                                    <input id="file-loader" type="file" name="file">
-                                </div>
-                                <div class="file-path-wrapper purple-text">
-                                    <input class="file-path validate" type="text"
-                                               placeholder="Загрузите файл">
-                                </div>
-                                <button id="submit-song"
-                                        class="waves-effect waves-light btn purple lighten-2 right">Отправить</button>
+                <div class="mdl-card mdl-shadow--2dp">
+                    <div class="mdl-card__supporting-text">
+                        <div class="mdl-stepper-horizontal-alternative">
+                            <div id="stepper-1" class="mdl-stepper-step active-step">
+                                <div class="mdl-stepper-circle"><span>1</span></div>
+                                <div class="mdl-stepper-title flow-text">Загрузите звуковой файл</div>
+                                <div class="mdl-stepper-bar-left"></div>
+                                <div class="mdl-stepper-bar-right"></div>
                             </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col s12 m12 l12 center">
-                        <p id="wav-status" class="flow-text">Отправляем файл</p>
-                        <div id="circle" class="preloader-wrapper big active center">
-                                <div class="spinner-layer spinner-red-only center">
-                                    <div class="circle-clipper left">
-                                        <div class="circle"></div>
-                                    </div>
-                                    <div class="gap-patch">
-                                        <div class="circle"></div>
-                                    </div>
-                                    <div class="circle-clipper right">
-                                        <div class="circle"></div>
-                                    </div>
-                                </div>
-                        </div>
-                        <div id="progress" class="progress">
-                            <div id="bar" class="determinate purple" style="width: 0"></div>
-                        </div>
-                    </div>
-                </div>
-                <div id="card-panel" class="card-panel flow-text pink lighten-5">
-                    <code id="main-message"></code>
-                </div>
-                {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                    <div class="flashes card-panel flow-text pink lighten-5">
-                    {% for message in messages %}
-                        <code>{{ message }}</code><br>
-                    {% endfor %}
-                    </div>
-                    {% endif %}
-                {% endwith %}
-                <div class="divider"></div>
-                <div class="row" id="step2">
-                    <div class="col s12 m12 l12 valign-wrapper">
-                        <div class="col s12 m6 l6">
-                            <h3>Введите текст песни</h3>
-                            <p class="flow-text">Текст, который будет пропет синтезатором речи</p>
-                        </div>
-                        <div class="col s12 m6 l6 center-align valign">
-                            <div class="input-field">
-                                <textarea id="song-text" cols="32" wrap="hard"
-                                          class="materialize-textarea pink-text"></textarea>
-                                <label class="purple-text" for="song-text">Текст песни</label>
+                            <div id="stepper-2" class="mdl-stepper-step">
+                                <div class="mdl-stepper-circle"><span>2</span></div>
+                                <div class="mdl-stepper-title">Введите текст песни</div>
+                                <div class="mdl-stepper-bar-left"></div>
+                                <div class="mdl-stepper-bar-right"></div>
                             </div>
-                            <button id="text_done" class="waves-effect waves-light btn purple lighten-2 right">Готово</button>
-                            <span>Голос: </span>
-                            <div class="switch">
-                                <label>
-                                    Мужской
-                                    <input id="voice-select" type="checkbox">
-                                    <span class="lever"></span>
-                                    Женский
-                                </label>
+                            <div id="stepper-3" class="mdl-stepper-step">
+                                <div class="mdl-stepper-circle"><span>3</span></div>
+                                <div class="mdl-stepper-title">Выберите фрагмент песни</div>
+                                <div class="mdl-stepper-bar-left"></div>
+                                <div class="mdl-stepper-bar-right"></div>
                             </div>
-                            <span><br>Кол-во тактов: <strong id="bar-counter" class="pink-text">0</strong></span>
-                            <span><br><a class="modal-trigger" href="#modal-help-text">Помощь</a></span>
-                            <div id="modal-help-text" class="modal">
-                                <div class="modal-content">
-                                    <h4>Помощь при вводе текста песни</h4>
-                                    <p>Хелпа!</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Понятно</a>
-                                </div>
+                            <div id="stepper-4" class="mdl-stepper-step">
+                                <div class="mdl-stepper-circle"><span>4</span></div>
+                                <div class="mdl-stepper-title">Сохраните результат</div>
+                                <div class="mdl-stepper-bar-left"></div>
+                                <div class="mdl-stepper-bar-right"></div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col s12 m12 l12 card-panel">
-                        <blockquote>Внимание!<br>От количества введенных строк зависит размер отрезка песни, который будет результатом работы этого приложения.</blockquote>
                     </div>
                 </div>
                 <div class="divider"></div>
-                <div class="row" id="step3">
-                    <div class="col s12 m12 l12">
-                        <h3>Выберите фрагмент песни</h3>
-                        <p class="flow-text">Фрагмент, на котором хотите слышать пение</p>
-                        <div id="waveform"></div>
-                        <button id="play-button" class="waves-effect waves-light purple lighten-2"><i class="material-icons">play_arrow</i><i class="material-icons">pause</i></button>
-                    </div>
-                    <div class="col s12 m12 l12">
-                        <button id="region-done" class="waves-effect waves-light btn pink lighten-2 right">Давай споём!</button>
+                <div id="wrapper">
+                    <div id="slider">
+                        <div id="step1" class="step valign-wrapper">
+                            <div class="row valign">
+                                <div class="col s12 m12 l12" id="loader">
+                                    <h3>Загрузите звуковой файл</h3>
+                                    <p class="flow-text">Песню, мелодию или сэмпл любого
+                                        популярного музыкального формата</p>
+                                    <form id="file-load-form" method='POST' enctype='multipart/form-data'>
+                                        <div class="file-field input-field">
+                                            <div class="waves-effect waves-light btn purple">
+                                                <span>Обзор</span>
+                                                <input id="file-loader" type="file" name="file">
+                                            </div>
+                                            <div class="file-path-wrapper purple-text">
+                                                <input class="file-path validate" type="text"
+                                                           placeholder="Загрузите файл">
+                                            </div>
+                                            <button id="submit-song"
+                                                    class="waves-effect waves-light btn purple lighten-2 right">Отправить</button>
+                                        </div>
+                                    </form>
+                                    <blockquote id="helper" class="card-panel">
+                                        <p class="left-align">Максимальный размер загружаемого файла - 40MB.</p>
+                                    </blockquote>
+                                </div>
+                                <div class="col s12 m12 l12 center">
+                                    <p id="hider" class="flow-text">Файл будет загружен и обработан. Этот процесс может занимать до минуты, в зависимости от размера файла</p>
+                                    <p id="wav-status" class="flow-text center-align">Отправляем файл</p>
+                                    <div id="circle" class="preloader-wrapper big active">
+                                            <div class="spinner-layer spinner-red-only">
+                                                <div class="circle-clipper left">
+                                                    <div class="circle"></div>
+                                                </div>
+                                                <div class="gap-patch">
+                                                    <div class="circle"></div>
+                                                </div>
+                                                <div class="circle-clipper right">
+                                                    <div class="circle"></div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                    <div id="progress" class="progress">
+                                        <div id="bar" class="determinate purple" style="width: 0"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="divider"></div>
+                        <div id="step2" class="step valign-wrapper">
+                            <div class="row valign">
+                                <div class="col s12 m12 l12 valign-wrapper">
+                                    <div class="col s12 m6 l6">
+                                        <h3>Введите текст песни</h3>
+                                        <p class="flow-text">Текст, который будет пропет синтезатором речи</p>
+                                    </div>
+                                    <div class="col s12 m6 l6 center-align valign">
+                                        <div class="input-field">
+                                            <textarea id="song-text" cols="32" wrap="hard"
+                                                      class="materialize-textarea pink-text"></textarea>
+                                            <label class="purple-text" for="song-text">Текст песни</label>
+                                        </div>
+                                        <button id="text_done" class="waves-effect waves-light btn purple lighten-2 right">Готово</button>
+                                        <span>Голос: </span>
+                                        <div class="switch">
+                                            <label>
+                                                Мужской
+                                                <input id="voice-select" type="checkbox">
+                                                <span class="lever"></span>
+                                                Женский
+                                            </label>
+                                        </div>
+                                        <span><br>Кол-во тактов: <strong id="bar-counter" class="pink-text">0</strong></span>
+                                        <span><br><a class="modal-trigger" href="#modal-help-text">Помощь</a></span>
+                                        <div id="modal-help-text" class="modal">
+                                            <div class="modal-content">
+                                                <h4>Помощь при вводе текста песни</h4>
+                                                <p>Хелпа!</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="#!" class="modal-action modal-close waves-effect waves-purple btn-flat">Понятно</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col s12 m12 l12 card-panel">
+                                    <blockquote>Внимание!<br>От количества введенных строк зависит размер отрезка песни, который будет результатом работы этого приложения.</blockquote>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="divider"></div>
+                        <div id="step3" class="step valign-wrapper">
+                            <div class="row valign">
+                                <div class="col s12 m12 l12">
+                                    <h3>Выберите фрагмент песни</h3>
+                                    <p class="flow-text">Фрагмент, на котором хотите слышать пение</p>
+                                    <div id="waveform"></div>
+                                    <button id="play-button" class="waves-effect waves-light purple lighten-2"><i class="material-icons">play_arrow</i><i class="material-icons">pause</i></button>
+                                </div>
+                                <div class="col s12 m12 l12">
+                                    <button id="region-done" class="waves-effect waves-light btn pink lighten-2 right">Давай споём!</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="step4" class="step valign-wrapper">
+                            <div class="row valign">
+                                <div class="col s12 m12 l12">
+                                    <h3>Готово!</h3>
+                                    <p class="flow-text">Вы можете прослушать результат работы здесь или сохранить на диск.</p>
+                                    <audio controls id="audio-result" src=""></audio>
+                                    <a id="audio-href" href="" target="_blank" class="btn waves-effect waves-light blue right">скачать</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
