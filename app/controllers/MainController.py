@@ -142,8 +142,15 @@ def process_regions(region, sess_path):
 
     instr -= 3
     voice_res += 6
-    print('voice {} \n instr {} \n'.format(voice_res.duration_seconds, instr.duration_seconds))
+    # print('voice {} \n instr {} \n'.format(voice_res.duration_seconds, instr.duration_seconds))
     full_track = instr.overlay(voice_res)
     full_track.export(os.path.join(safe_path, 'result.wav'), format='wav')
     url = url_for('index') + 'static/' + 'audio/' + sess_path + '/result.wav'
+
+    filelist = [f for f in os.listdir(safe_path)]
+    for f in filelist:
+        if not f == 'result.wav':
+            f_path = os.path.join(safe_path, f)
+            os.remove(f_path)
+
     return url

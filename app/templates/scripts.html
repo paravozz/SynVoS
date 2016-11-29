@@ -223,7 +223,6 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 success: function (response) {
-                    wavesurfer.pause();
                     Materialize.toast('Готово!', 2000);
                     stepers[2].addClass('step-done');
                     stepers[3].addClass('active-step');
@@ -231,11 +230,14 @@
                     $('#step4').show();
                     $('#audio-result').attr('src', response);
                     $('#audio-href').attr('href', response);
+                    if (wavesurfer.isPlaying) {
+                        wavesurfer.pause();
+                    }
                 },
                 error: function() {
                     stepers[2].removeClass('step-done');
                     stepers[3].removeClass('active-step');
-                    alert('error');
+                    Materialize.toast('Ошибка. Попробуйте перезагрузить страницу и повторить', 4000);
                 }
              });
          });
