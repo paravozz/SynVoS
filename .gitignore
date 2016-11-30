@@ -5,3 +5,5 @@ setTimeStretch.py
 /app/templates/INDEX2.html
 /app/static/scripts/dropzone.js
 *.wav
+app/static/styles/materialize.min — копия.css
+app/db_repository
