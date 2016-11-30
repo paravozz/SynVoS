@@ -1,5 +1,5 @@
+#!flask/bin/python3
 import os
-
 import numpy as np
 import requests
 
@@ -8,7 +8,7 @@ from hashlib import md5
 from flask import url_for
 from werkzeug.utils import secure_filename
 
-from app import ALLOWED_EXTENSIONS, UPLOAD_FOLDER, YANDEX_API_KEY
+from app.config import ALLOWED_EXTENSIONS, UPLOAD_FOLDER, YANDEX_API_KEY
 from .WaveArray import WaveArray
 from pydub import AudioSegment
 
@@ -147,8 +147,8 @@ def process_regions(region, sess_path):
     full_track.export(os.path.join(safe_path, 'result.wav'), format='wav')
     url = url_for('index') + 'static/' + 'audio/' + sess_path + '/result.wav'
 
-    filelist = [f for f in os.listdir(safe_path)]
-    for f in filelist:
+    file_list = [f for f in os.listdir(safe_path)]
+    for f in file_list:
         if not f == 'result.wav':
             f_path = os.path.join(safe_path, f)
             os.remove(f_path)

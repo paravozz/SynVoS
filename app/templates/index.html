@@ -1,56 +1,75 @@
 {% extends 'base.html' %}
 {% block content %}
-    <header>
-        <div class="section" id="header">
-        <div class="container">
-            <div class="row">
-                <div class="col s12 m6 l6">
-                    <h1>
-                        <span style="color: #000;">S</span>yn<span style="color: #000;">V</span>o<span style="color: #000;">S</span>
-                    </h1>
-                    <p class="flow-text">
-                        Способ сделать простую песню с поющим синтезированным голосом.
-                    </p>
-                </div>
-                <div class="col s12 m6 l6 center-align valign">
-                    <img id="header_img" class="responsive-img hide-on-small-only"
-                         src="{{ url_for('static', filename='imgs/head.png') }}" alt="logo">
-                </div>
-            </div>
-        </div>
-        </div>
-    </header>
-    <div class="divider"></div>
     <main>
         <div class="section" id="body">
             <div class="container">
-                <h2>Все очень просто</h2>
-                <div class="mdl-card mdl-shadow--2dp">
-                    <div class="mdl-card__supporting-text">
-                        <div class="mdl-stepper-horizontal-alternative">
-                            <div id="stepper-1" class="mdl-stepper-step active-step">
-                                <div class="mdl-stepper-circle"><span>1</span></div>
-                                <div class="mdl-stepper-title flow-text">Загрузите звуковой файл</div>
-                                <div class="mdl-stepper-bar-left"></div>
-                                <div class="mdl-stepper-bar-right"></div>
+                <div class="row">
+                    {% if not g.user.is_authenticated %}
+                    <div class="row valign-wrapper">
+                        <div class="col s4 m4 l4 valign">
+                            <p class="flow-text">Войти с помощью: </p>
+                        </div>
+                        <div class="col s8 m8 l8 valign">
+                            <div class="social-buttons">
+                                <a href="{{ url_for('oauth_authorize', provider='facebook') }}" class="social-button facebook z-depth-2">
+                                    <i class="fa fa-facebook"></i>
+                                </a>
+                                <a href="{{ url_for('oauth_authorize', provider='github') }}" class="social-button github z-depth-2">
+                                    <i class="fa fa-github"></i>
+                                </a>
+                                <a href="{{ url_for('oauth_authorize', provider='google') }}" class="social-button google z-depth-2">
+                                    <i class="fa fa-google"></i>
+                                </a>
+                                <a href="{{ url_for('oauth_authorize', provider='vk') }}" class="social-button vk z-depth-2">
+                                    <i class="fa fa-vk"></i>
+                                </a>
                             </div>
-                            <div id="stepper-2" class="mdl-stepper-step">
-                                <div class="mdl-stepper-circle"><span>2</span></div>
-                                <div class="mdl-stepper-title">Введите текст песни</div>
-                                <div class="mdl-stepper-bar-left"></div>
-                                <div class="mdl-stepper-bar-right"></div>
-                            </div>
-                            <div id="stepper-3" class="mdl-stepper-step">
-                                <div class="mdl-stepper-circle"><span>3</span></div>
-                                <div class="mdl-stepper-title">Выберите фрагмент песни</div>
-                                <div class="mdl-stepper-bar-left"></div>
-                                <div class="mdl-stepper-bar-right"></div>
-                            </div>
-                            <div id="stepper-4" class="mdl-stepper-step">
-                                <div class="mdl-stepper-circle"><span>4</span></div>
-                                <div class="mdl-stepper-title">Сохраните результат</div>
-                                <div class="mdl-stepper-bar-left"></div>
-                                <div class="mdl-stepper-bar-right"></div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="row">
+                         <div class="col s12 m12 l12">
+                             {% with messages = get_flashed_messages() %}
+                             {% if messages %}
+                                 <ul>
+                            {% for message in messages %}
+                                     <li class="pink-text">{{ message }}</li>
+                            {% endfor %}
+                                 </ul>
+                            {% endif %}
+                            {% endwith %}
+                         </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <h2>Все очень просто</h2>
+                    <div class="mdl-card mdl-shadow--2dp">
+                        <div class="mdl-card__supporting-text">
+                            <div class="mdl-stepper-horizontal-alternative">
+                                <div id="stepper-1" class="mdl-stepper-step active-step">
+                                    <div class="mdl-stepper-circle"><span>1</span></div>
+                                    <div class="mdl-stepper-title flow-text">Загрузите звуковой файл</div>
+                                    <div class="mdl-stepper-bar-left"></div>
+                                    <div class="mdl-stepper-bar-right"></div>
+                                </div>
+                                <div id="stepper-2" class="mdl-stepper-step">
+                                    <div class="mdl-stepper-circle"><span>2</span></div>
+                                    <div class="mdl-stepper-title">Введите текст песни</div>
+                                    <div class="mdl-stepper-bar-left"></div>
+                                    <div class="mdl-stepper-bar-right"></div>
+                                </div>
+                                <div id="stepper-3" class="mdl-stepper-step">
+                                    <div class="mdl-stepper-circle"><span>3</span></div>
+                                    <div class="mdl-stepper-title">Выберите фрагмент песни</div>
+                                    <div class="mdl-stepper-bar-left"></div>
+                                    <div class="mdl-stepper-bar-right"></div>
+                                </div>
+                                <div id="stepper-4" class="mdl-stepper-step">
+                                    <div class="mdl-stepper-circle"><span>4</span></div>
+                                    <div class="mdl-stepper-title">Сохраните результат</div>
+                                    <div class="mdl-stepper-bar-left"></div>
+                                    <div class="mdl-stepper-bar-right"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -175,17 +194,4 @@
             </div>
         </div>
     </main>
-    <div class="divider"></div>
-    <footer>
-    <div class="container">
-        <div class="row">
-            <div class="col s12 m6 l6">
-                <p class="flow-text left-align">Copyright &copy; Ilya Perevoznik 2016</p>
-            </div>
-            <div class="col s12 m6 l6 right">
-                <a class="right" href="https://tech.yandex.ru/speechkit/cloud/" target="_blank"><img src="https://goo.gl/PK971w" alt="Yandex SpeechKit"></a>
-            </div>
-        </div>
-    </div>
-    </footer>
 {% endblock %}

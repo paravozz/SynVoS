@@ -6,16 +6,56 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <title>SynVoS Test Page</title>
+    <title>SynVoS - Synthetic Voice Singer</title>
 
-    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="image/x-icon" rel="shortcut icon"
+          href="{{ url_for('static', filename='imgs/favicon.ico') }}">
     <link type="text/css" rel="stylesheet"
           href="{{ url_for('static', filename='styles/materialize.min.css') }}"  media="screen,projection"/>
     <link type="text/css" rel="stylesheet"
           href="{{ url_for('static', filename='styles/styles.css') }}"/>
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet"
+          href="{{ url_for('static', filename='styles/font-awesome.min.css') }}">
 </head>
 <body>
+    <header>
+        <div class="section" id="header">
+            <div class="container">
+                <div class="row">
+                    <div class="col s12 m6 l6">
+                        <h1 class="hide-on-med-and-up">
+                            <span style="color: #000;">S</span>yn<span style="color: #000;">V</span>o<span style="color: #000;">S</span>
+                        </h1>
+                        <img id="header_logo" class="right responsive-img hide-on-small-only"
+                             src="{{ url_for('static', filename='imgs/header.png') }}" alt="logo">
+                        <p class="flow-text">
+                            Способ сделать простую песню с поющим синтезированным голосом.
+                        </p>
+                    </div>
+                    <div class="col s12 m6 l6 valign">
+                        <img id="header_img" class="right responsive-img hide-on-small-only"
+                             src="{{ url_for('static', filename='imgs/head.png') }}" alt="treble clef">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="divider"></div>
     {% block content %} {% endblock %}
     {% include 'scripts.html' %}
+    <div class="divider"></div>
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col s12 m6 l6">
+                    <p class="flow-text left-align">Copyright &copy; Ilya Perevoznik 2016</p>
+                </div>
+                <div class="col s12 m6 l6 right">
+                    <a class="right" href="https://tech.yandex.ru/speechkit/cloud/" target="_blank"><img src="https://goo.gl/PK971w" alt="Yandex SpeechKit"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
