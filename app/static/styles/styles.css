@@ -2,18 +2,15 @@
     font-family: "Apercu Mono"; /* Имя шрифта */
     src: url('../fonts/apercu-mono-webfont.ttf');
    }
-.section, footer {
-    padding: 10px;
-}
-#header {
-    background-color: #ba68c8;
-    color: #fff;
-}
+/*.section, footer {*/
+    /*padding: 10px;*/
+/*}*/
+/*#header {*/
+    /*background-color: #ba68c8;*/
+    /*color: #fff;*/
+/*}*/
 #header_img {
     max-height: 250px;
-}
-#checkbox_remember {
-    margin-top: -5px;
 }
 #body {
     background-color: #fff;
@@ -37,7 +34,8 @@ code {
 }
 .wavesurfer-region {
     background-color: rgba(186, 104, 200, 0.3) !important;
-    border: dashed 4px rgba(171, 71, 188, 0.5);
+    border-left: solid 4px rgba(255, 171, 145, 0.5);
+    border-right: solid 4px rgba(255, 171, 145, 0.5);
 }
 .step {
     min-height: 60vh;
@@ -121,7 +119,7 @@ code {
 }
 
 .mdl-stepper-horizontal-alternative .mdl-stepper-step.active-step .mdl-stepper-circle {
-  background-color: #ba68c8;
+  background-color: #FF7043;
 }
 
 .mdl-stepper-horizontal-alternative .mdl-stepper-step.step-done .mdl-stepper-circle:before {

@@ -4,44 +4,6 @@
         <div class="section" id="body">
             <div class="container">
                 <div class="row">
-                    {% if not g.user.is_authenticated %}
-                    <div class="row valign-wrapper">
-                        <div class="col s4 m4 l4 valign">
-                            <p class="flow-text">Войти с помощью: </p>
-                        </div>
-                        <div class="col s8 m8 l8 valign">
-                            <div class="social-buttons">
-                                <a href="{{ url_for('oauth_authorize', provider='facebook') }}" class="social-button facebook z-depth-2">
-                                    <i class="fa fa-facebook"></i>
-                                </a>
-                                <a href="{{ url_for('oauth_authorize', provider='github') }}" class="social-button github z-depth-2">
-                                    <i class="fa fa-github"></i>
-                                </a>
-                                <a href="{{ url_for('oauth_authorize', provider='google') }}" class="social-button google z-depth-2">
-                                    <i class="fa fa-google"></i>
-                                </a>
-                                <a href="{{ url_for('oauth_authorize', provider='vk') }}" class="social-button vk z-depth-2">
-                                    <i class="fa fa-vk"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                    <div class="row">
-                         <div class="col s12 m12 l12">
-                             {% with messages = get_flashed_messages() %}
-                             {% if messages %}
-                                 <ul>
-                            {% for message in messages %}
-                                     <li class="pink-text">{{ message }}</li>
-                            {% endfor %}
-                                 </ul>
-                            {% endif %}
-                            {% endwith %}
-                         </div>
-                    </div>
-                </div>
-                <div class="row">
                     <h2>Все очень просто</h2>
                     <div class="mdl-card mdl-shadow--2dp">
                         <div class="mdl-card__supporting-text">
@@ -94,7 +56,7 @@
                                                            placeholder="Загрузите файл">
                                             </div>
                                             <button id="submit-song"
-                                                    class="waves-effect waves-light btn purple lighten-2 right">Отправить</button>
+                                                    class="waves-effect waves-light btn deep-orange lighten-1 right">Отправить</button>
                                         </div>
                                     </form>
                                     <div class="col s12 m12 l12 card-panel">
@@ -137,7 +99,7 @@
                                                       class="materialize-textarea pink-text"></textarea>
                                             <label class="purple-text" for="song-text">Текст песни</label>
                                         </div>
-                                        <button id="text_done" class="waves-effect waves-light btn purple lighten-2 right">Готово</button>
+                                        <button id="text_done" class="waves-effect waves-light btn deep-orange lighten-1 right">Готово</button>
                                         <span>Голос: </span>
                                         <div class="switch">
                                             <label>
@@ -175,7 +137,7 @@
                                     <button id="play-button" class="waves-effect waves-light purple lighten-2"><i class="material-icons">play_arrow</i><i class="material-icons">pause</i></button>
                                 </div>
                                 <div class="col s12 m12 l12">
-                                    <button id="region-done" class="waves-effect waves-light btn pink lighten-2 right">Давай споём!</button>
+                                    <button id="region-done" class="waves-effect waves-light btn deep-orange lighten-1 right">Давай споём!</button>
                                 </div>
                             </div>
                         </div>
@@ -183,9 +145,13 @@
                             <div class="row valign">
                                 <div class="col s12 m12 l12">
                                     <h3>Готово!</h3>
-                                    <p class="flow-text">Вы можете прослушать результат работы здесь или сохранить на диск.</p>
+                                    <p class="flow-text">Вы можете прослушать результат работы здесь, сохранить на диск или к себе в профиль.</p>
+                                    <blockquote>Для сохранения в профиль необходимо войти.</blockquote>
                                     <audio controls id="audio-result" src=""></audio>
-                                    <a id="audio-href" href="" target="_blank" class="btn waves-effect waves-light blue right">скачать</a>
+                                    <a id="audio-href" href="" target="_blank" class="btn waves-effect waves-light blue right">Скачать</a>
+                                    {% if g.user.is_authenticated %}
+                                    <a id="save-audio" href="" class="btn waves-effect waves-light deep-orange lighten-1 right">Сохранить в профиль</a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

@@ -7,7 +7,18 @@ from app.models import User
 from flask_login import logout_user, login_user, current_user
 from app.controllers.OAuthController import OAuthSignIn
 from app.controllers.MainController import safe_save, process_text, \
-    get_wav_repr, create_sid, process_regions
+    get_wav_repr, create_sid, process_regions, save_in_db
+
+
+@app.route('/savetodb', methods=['POST'])
+def savetodb():
+    if current_user.is_anonymous:
+        flash('Чтобы сохранять файлы необходимо войти')
+        return jsonify(url_for('index'))
+    if request.json:
+        save_in_db(request.json)
+        flash('Файл {} сохранен'.format(request.json))
+        return jsonify(url_for('profile'))
 
 
 @app.route('/region_done', methods=['POST'])
@@ -66,10 +77,10 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/<username>')
-def profile(username):
+@app.route('/profile')
+def profile():
     if not current_user.is_anonymous:
-        return render_template('profile.html', username=username)
+        return render_template('profile.html')
     return redirect(url_for('index'))
 
 

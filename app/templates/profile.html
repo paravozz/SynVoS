@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
     <main>
-        <h1>HELLO, {{ username }}</h1>
+        <div class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <h1>Привет, {{ g.user.nickname }}</h1>
+                        <p class="flow-text">Вот что нам удалось найти:</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 {% endblock %}

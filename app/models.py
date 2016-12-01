@@ -12,7 +12,7 @@ class User(UserMixin, db.Model):
     files = db.relationship('File', backref='user', lazy='dynamic')
 
     def __repr__(self):
-        return '<User %r, Social %r>' % self.nickname, self.social_id
+        return '<User {}, Social {}>'.format(self.nickname, self.social_id)
 
 
 class File(db.Model):

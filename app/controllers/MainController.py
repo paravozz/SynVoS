@@ -1,4 +1,5 @@
 #!flask/bin/python3
+import datetime
 import os
 import numpy as np
 import requests
@@ -8,6 +9,7 @@ from hashlib import md5
 from flask import url_for
 from werkzeug.utils import secure_filename
 
+from app import models
 from app.config import ALLOWED_EXTENSIONS, UPLOAD_FOLDER, YANDEX_API_KEY
 from .WaveArray import WaveArray
 from pydub import AudioSegment
@@ -133,7 +135,6 @@ def process_regions(region, sess_path):
         elif freq_diff > 6:
             freq_diff -= 12
 
-        print(freq_diff)
         wav_segment.pitch_shift(freq_diff)
         wav_segment.save(path)
 
@@ -154,3 +155,7 @@ def process_regions(region, sess_path):
             os.remove(f_path)
 
     return url
+
+
+def save_in_db(temp_url):
+    pass

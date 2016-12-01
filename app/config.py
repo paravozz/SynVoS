@@ -1,14 +1,5 @@
 #!flask/bin/python3
-import os
-
 # GLOBAL VARIABLES
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-# SQLALCHEMY_DATABASE_URI = 'postgres://jdappfswfuldjx:' \
-#                           '4yt1VYr8drhAc-Z7nVOpr8OnvA@ec2-54-75-228-77.' \
-#                           'eu-west-1.compute.amazonaws.com:5432/ddauplqp92qvmb'
-
-
 YANDEX_API_KEY = 'cd6d68b2-8abf-4e88-9f91-881624e8392e'
 UPLOAD_FOLDER = '/Volumes/multimedia/prvz/Desktop/UNIVERSITY/SynVoS/app/static/audio'
 ALLOWED_EXTENSIONS = set(['wav'])
@@ -16,7 +7,6 @@ ALLOWED_EXTENSIONS = set(['wav'])
 
 # APP CONFIG VARIABLES
 class Config(object):
-    SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
     MAX_CONTENT_LENGTH = 40 * 1024 * 1024
     SQLALCHEMY_DATABASE_URI = 'postgres://jdappfswfuldjx:' \
                               '4yt1VYr8drhAc-Z7nVOpr8OnvA@ec2-54-75-228-77.' \
