@@ -93,6 +93,9 @@ def get_wav_repr(path, sess_path, filename):
         'bar_count': wav.bars,
         'bar_len': wav.bar_len
     }
+    ######
+    print(_WAV.html_repr())
+    ######
     return res
 
 

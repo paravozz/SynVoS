@@ -10,8 +10,8 @@ from app.controllers.MainController import safe_save, process_text, \
     get_wav_repr, create_sid, process_regions, save_in_db
 
 
-@app.route('/savetodb', methods=['POST'])
-def savetodb():
+@app.route('/save_to_db', methods=['POST'])
+def save_to_db():
     if current_user.is_anonymous:
         flash('Чтобы сохранять файлы необходимо войти')
         return jsonify(url_for('index'))

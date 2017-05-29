@@ -5,7 +5,6 @@ from aubio import tempo, pitch, pvoc, float_type, cvec, unwrap2pi
 
 
 class WaveArray(object):
-
     def __init__(self, file_path, win_size=1024, bpm=None, no_process=False, no_pitch=False):
         self._file = file_path.split('/')[-1]
         self._file_path = file_path
@@ -36,7 +35,7 @@ class WaveArray(object):
         if not self._no_process:
             if self._bpm is None:
                 self._bpm = self._get_bpm()
-            self._bar_len = self._bpm / 60
+            self._bar_len = (60 / self._bpm) * 4
             self._bar_count = int(np.floor(self._duration / self._bar_len))
 
             if not self._no_pitch:
@@ -103,7 +102,7 @@ class WaveArray(object):
         if len(beats) > 1:
             if len(beats) < 4:
                 print("few beats found in wave array")
-            bpms = 120./np.diff(beats)
+            bpms = 120. / np.diff(beats)
             b = np.median(bpms)
             if b > 200:
                 while b > 200:
@@ -303,9 +302,9 @@ class WaveArray(object):
                "BPM: <span style='color: #ff5722'>{}</span><br>\n " \
                "&nbsp;&nbsp;<span style='color: #00bcd4'>{}</span> bars<br>\n " \
                "&nbsp;&nbsp;PitchArray:<br>\n" \
-               "&nbsp;&nbsp;&nbsp;&nbsp;<span style='color: #7e57c2'>{}</span>"\
+               "&nbsp;&nbsp;&nbsp;&nbsp;<span style='color: #7e57c2'>{}</span>" \
             .format(self._file, self._samplerate, stereo,
-                           self._bpm, self._bar_count, self._pitch)
+                    self._bpm, self._bar_count, self._pitch)
 
     @property
     def pitch(self):
